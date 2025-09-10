@@ -1,24 +1,24 @@
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useCallback } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Contributor, Document } from "../models/types";
+
+import { Document } from "../models/types";
+import { useListByStore } from "../stores/useListByStore";
 
 export default function DocumentItem({ data }: { data: Document }) {
-  const ContributorItem = useCallback((contributor: Contributor) => {
-    return (
-      <View key={contributor.id} style={{ marginBottom: 8 }}>
-        <Text style={{ fontSize: 14, color: "gray" }}>{contributor.name}</Text>
-      </View>
-    );
-  }, []);
+  const { activeElement } = useListByStore();
 
-  const AttachmentItem = useCallback((attachment: string) => {
+  if (activeElement === "grid") {
     return (
-      <View key={attachment} style={{ marginBottom: 8 }}>
-        <Text style={{ fontSize: 14, color: "gray" }}>{attachment}</Text>
+      <View style={styles.container}>
+        <View style={styles.gridTitleContainer}>
+          <Text style={styles.title}>{data.title}</Text>
+          <View style={styles.sizeBox} />
+          <Text style={styles.version}>Version {data.version}</Text>
+        </View>
       </View>
     );
-  }, []);
+  }
 
   return (
     <View style={styles.container}>
@@ -38,7 +38,16 @@ export default function DocumentItem({ data }: { data: Document }) {
             <View style={styles.sizeBox} />
             <Text style={styles.descriptionTitle}>Contributors</Text>
           </View>
-          {data.contributors.map((contributor) => ContributorItem(contributor))}
+          {data.contributors.map((contributor, index) => (
+            <View
+              key={`${contributor.id}-${index}`}
+              style={{ marginBottom: 8 }}
+            >
+              <Text style={{ fontSize: 14, color: "gray" }}>
+                {contributor.name}
+              </Text>
+            </View>
+          ))}
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionTitleContainer}>
@@ -46,12 +55,16 @@ export default function DocumentItem({ data }: { data: Document }) {
             <View style={styles.sizeBox} />
             <Text style={styles.descriptionTitle}>Attachments</Text>
           </View>
-          {data.attachments.map((attachment) => AttachmentItem(attachment))}
+          {data.attachments.map((attachment, index) => (
+            <View key={`${attachment}-${index}`} style={{ marginBottom: 8 }}>
+              <Text style={{ fontSize: 14, color: "gray" }}>{attachment}</Text>
+            </View>
+          ))}
         </View>
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -59,6 +72,10 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 16,
     borderRadius: 5,
+  },
+  gridTitleContainer: {
+    alignItems: "flex-start",
+    marginBottom: 10,
   },
   titleContainer: {
     flexDirection: "row",

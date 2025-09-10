@@ -1,14 +1,12 @@
-import DocumentItem from "@/src/components/DocumentItem";
-import { mockDocuments } from "@/src/constant/mockDocuments";
-import { useTheme } from "@/src/hooks/useTheme";
-import { FlashList } from "@shopify/flash-list";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import DocumentList from "@/src/components/DocumentList";
+import ListBy from "@/src/components/ListBy";
+import { useTheme } from "@/src/hooks/useTheme";
+
 export default function DocumentScreen() {
   const theme = useTheme();
-
-  const data = mockDocuments;
 
   return (
     <SafeAreaView
@@ -19,18 +17,10 @@ export default function DocumentScreen() {
         <View>
           <Text>Sort By</Text>
         </View>
-        <View>
-          <Text>List By</Text>
-        </View>
+        <ListBy/>
       </View>
-      <FlashList
-        contentContainerStyle={styles.contentContainer}
-        data={data}
-        renderItem={({ item }) => (
-          <DocumentItem data={item} />
-        )}
-        estimatedItemSize={200}
-      />
+
+      <DocumentList/>
 
       <View style={styles.footer}>
         <Button title="Add document" onPress={() => {}} />
@@ -47,8 +37,6 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 15,
-    marginBottom: 15,
   },
   contentContainer: {
     padding: 16,
