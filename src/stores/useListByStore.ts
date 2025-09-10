@@ -1,11 +1,16 @@
 import { create } from "zustand";
 
+export enum ListByEnum {
+  LIST = "list",
+  GRID = "grid",
+}
+
 interface ListByStore {
-  activeElement: "list" | "grid";
-  setActiveElement: (element: "list" | "grid") => void;
+  activeElement: ListByEnum;
+  setActiveElement: (element: ListByEnum) => void;
 }
 
 export const useListByStore = create<ListByStore>((set) => ({
-  activeElement: "list",
+  activeElement: ListByEnum.LIST,
   setActiveElement: (element) => set({ activeElement: element }),
 }));

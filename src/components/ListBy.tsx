@@ -1,6 +1,7 @@
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { useListByStore } from "../stores/useListByStore";
+
+import { ListByEnum, useListByStore } from "@/src/stores/useListByStore";
 
 export default function ListBy() {
 
@@ -12,27 +13,27 @@ export default function ListBy() {
       <TouchableOpacity
         style={[
           styles.elementContainer,
-          activeElement === "list" && styles.activeElementContainerList,
+          activeElement === ListByEnum.LIST && styles.activeElementContainerList,
         ]}
-        onPress={() => setActiveElement("list")}
+        onPress={() => setActiveElement(ListByEnum.LIST)}
       >
         <FontAwesome6
           name="list"
           size={20}
-          color={activeElement === "list" ? "#4281F2" : "gray"}
+          color={activeElement === ListByEnum.LIST ? "#4281F2" : "gray"}
         />
       </TouchableOpacity>
       <TouchableOpacity
         style={[
           styles.elementContainer,
-          activeElement === "grid" && styles.activeElementContainerGrid,
+          activeElement === ListByEnum.GRID && styles.activeElementContainerGrid,
         ]}
-        onPress={() => setActiveElement("grid")}
+        onPress={() => setActiveElement(ListByEnum.GRID)}
       >
         <MaterialCommunityIcons
           name="grid-large"
           size={22}
-          color={activeElement === "grid" ? "#4281F2" : "gray"}
+          color={activeElement === ListByEnum.GRID ? "#4281F2" : "gray"}
         />
       </TouchableOpacity>
     </View>

@@ -14,3 +14,9 @@ export type Contributor = {
 };
 
 export type CreateDocumentDTO = { name: string; version: string; fileUrl: string };
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+};

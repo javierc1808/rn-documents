@@ -2,13 +2,13 @@ import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { Document } from "../models/types";
-import { useListByStore } from "../stores/useListByStore";
+import { Document } from "@/src/models/types";
+import { ListByEnum, useListByStore } from "@/src/stores/useListByStore";
 
 export default function DocumentItem({ data }: { data: Document }) {
   const { activeElement } = useListByStore();
 
-  if (activeElement === "grid") {
+  if (activeElement === ListByEnum.GRID) {
     return (
       <View style={styles.container}>
         <View style={styles.gridTitleContainer}>

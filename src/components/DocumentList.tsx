@@ -1,15 +1,32 @@
 import { FlashList } from '@shopify/flash-list';
-import { RefreshControl, StyleSheet } from 'react-native';
+import { ActivityIndicator, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
-import { useDocuments } from '../hooks/useDocuments';
-import DocumentItem from './DocumentItem';
+import DocumentItem from '@/src/components/DocumentItem';
+import { useDocuments } from '@/src/hooks/useDocuments';
 
 export default function DocumentList() {
 
-  const { data, isRefetching, refetch } = useDocuments();
+  const { data, isRefetching, refetch, isLoading, error } = useDocuments();
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <FlashList
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
         data={data}
         renderItem={({ item }) => (
@@ -24,5 +41,10 @@ export default function DocumentList() {
 const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -1,8 +1,9 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import DocumentList from "@/src/components/DocumentList";
 import ListBy from "@/src/components/ListBy";
+import SortBy from "@/src/components/SortBy";
 import { useTheme } from "@/src/hooks/useTheme";
 
 export default function DocumentScreen() {
@@ -14,9 +15,7 @@ export default function DocumentScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <View style={styles.sortListContainer}>
-        <View>
-          <Text>Sort By</Text>
-        </View>
+        <SortBy/>
         <ListBy/>
       </View>
 

@@ -1,4 +1,4 @@
-import { Document } from "../models/types";
+import { Document } from "@/src/models/types";
 
 export const mockDocuments: Document[] = [
   {
