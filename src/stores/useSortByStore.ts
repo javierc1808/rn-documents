@@ -1,11 +1,6 @@
 import { create } from "zustand";
 
-export enum SortByEnum {
-  RECENT = "recent",
-  OLDEST = "oldest",
-  AZ = "A-Z",
-  ZA = "Z-A",
-}
+import { SortByEnum } from "../models/enums";
 
 interface SortByStore {
   activeElement: SortByEnum;

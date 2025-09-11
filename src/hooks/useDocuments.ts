@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
+import { SortByEnum } from "@/src/models/enums";
 import { Document } from "@/src/models/types";
-import { SortByEnum, useSortByStore } from "@/src/stores/useSortByStore";
+import { useSortByStore } from "@/src/stores/useSortByStore";
 
 const getDocuments = async (): Promise<Document[]> => {
   const res = await fetch("http://localhost:8080/documents");

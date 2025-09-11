@@ -1,7 +1,8 @@
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { ListByEnum, useListByStore } from "@/src/stores/useListByStore";
+import { ListByEnum } from "@/src/models/enums";
+import { useListByStore } from "@/src/stores/useListByStore";
 
 export default function ListBy() {
 

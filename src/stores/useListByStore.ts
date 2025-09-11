@@ -1,9 +1,6 @@
 import { create } from "zustand";
 
-export enum ListByEnum {
-  LIST = "list",
-  GRID = "grid",
-}
+import { ListByEnum } from "../models/enums";
 
 interface ListByStore {
   activeElement: ListByEnum;

@@ -13,7 +13,7 @@ export type Contributor = {
   name: string;
 };
 
-export type CreateDocumentDTO = { name: string; version: string; fileUrl: string };
+export type CreateDocumentDTO = { name: string; version: string; files: string[] };
 
 export type User = {
   id: string;

@@ -17,7 +17,7 @@ export const RootNavigator = () => {
     headerRight: CustomRightHeader,
   };
 
-  // Mostrar loading mientras se verifica la autenticación
+  // Show loading while authentication is being verified
   if (!isLoading) {
     return (
       <View

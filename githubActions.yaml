@@ -1,0 +1,4 @@
+- name: Lint
+  run: yarn lint
+- name: Typecheck
+  run: yarn typecheck

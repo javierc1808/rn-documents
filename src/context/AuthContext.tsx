@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verificar si hay una sesión guardada al iniciar la app
+  // Check if there is a saved session when the app starts
   useEffect(() => {
     const getOrCreateFakeAuthData = async () => {
       let userString = await AsyncStorage.getItem('user');

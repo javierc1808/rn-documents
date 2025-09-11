@@ -2,8 +2,9 @@ import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
+import { ListByEnum } from "@/src/models/enums";
 import { Document } from "@/src/models/types";
-import { ListByEnum, useListByStore } from "@/src/stores/useListByStore";
+import { useListByStore } from "@/src/stores/useListByStore";
 
 export default function DocumentItem({ data }: { data: Document }) {
   const { activeElement } = useListByStore();
