@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderWidth: 1,
     borderColor: "lightgray",
-    borderRadius: 10,
+    borderRadius: 8,
   },
   elementContainer: {
     paddingHorizontal: 25,
@@ -56,12 +56,12 @@ const styles = StyleSheet.create({
   },
   activeElementContainerList: {
     backgroundColor: "white",
-    borderTopStartRadius: 10,
-    borderBottomStartRadius: 10,
+    borderTopStartRadius: 8,
+    borderBottomStartRadius: 8,
   },
   activeElementContainerGrid: {
     backgroundColor: "white",
-    borderTopEndRadius: 10,
-    borderBottomEndRadius: 10,
+    borderTopEndRadius: 8,
+    borderBottomEndRadius: 8,
   },
 });

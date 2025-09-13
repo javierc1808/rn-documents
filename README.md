@@ -31,7 +31,6 @@ I chose **Expo** as the foundation since it is currently recommended by the Reac
 ## 4. Third-Party Libraries
 ### Contents
 - [@shopify/flash-list](#shopifyflash-list)
-- [uuid](#uuid)
 - [expo-haptics](#expo-haptics)
 - [@faker-js/faker](#faker-jsfaker)
 - [@expo/vector-icons](#expovector-icons)
@@ -66,28 +65,6 @@ import { FlashList } from '@shopify/flash-list';
   renderItem={({ item }) => <DocCard doc={item} />}
   estimatedItemSize={90}
 />
-```
-
----
-
-### uuid
-
-**Why**  
-Generate unique IDs (e.g., **optimistic UI**, temporary keys, tracking). Widely adopted and battle‑tested.
-
-**Alternatives**  
-- `nanoid` — ✅ shorter/faster IDs; ❌ not UUID v4.  
-- `react-native-uuid` — ✅ RN focused; ❌ less standard.  
-- `expo-random` — ✅ crypto‑safe entropy source (combine if needed).
-
-**When to switch**  
-- Need shorter IDs → `nanoid`.  
-- Strong randomness requirements → combine with `expo-random`.
-
-**Snippet**
-```ts
-import { v4 as uuidv4 } from 'uuid';
-const id = uuidv4();
 ```
 
 ---
@@ -226,7 +203,7 @@ formatDistanceToNow(new Date(doc.createdAt), { addSuffix: true });
 **Why**  
 Simple persistence **compatible with Expo Go**. Used for preferences and/or basic cache (via persistQueryClient if needed).
 
-> **Why not MMKV?** It’s **faster** and more memory‑efficient, but **requires prebuild/eject** and **doesn’t work in Expo Go**. Using MMKV slows iteration (native build times) and hurts the Expo Managed DX — **not ideal for this challenge** focused on speed.
+> **Why not MMKV?** It’s **faster** and more memory‑efficient, but **requires prebuild/eject** and **doesn’t work in Expo Go**. Using MMKV slows iteration (native build times) and hurts the Expo Managed DX
 
 **Alternatives**  
 - **MMKV** — 🔥 performance; ❌ prebuild, no Expo Go.  

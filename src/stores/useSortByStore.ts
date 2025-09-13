@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { SortByEnum } from "../models/enums";
+import { SortByEnum } from "@/src/models/enums";
 
 interface SortByStore {
   activeElement: SortByEnum;

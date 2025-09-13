@@ -1,21 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
+import { useAuthContext } from "@/src/context/AuthContext";
 import { SortByEnum } from "@/src/models/enums";
 import { Document } from "@/src/models/types";
 import { useSortByStore } from "@/src/stores/useSortByStore";
 
-const getDocuments = async (): Promise<Document[]> => {
-  const res = await fetch("http://localhost:8080/documents");
+const getDocuments = async (authToken: string): Promise<Document[]> => {
+
+  const res = await fetch("http://localhost:8080/documents", {
+    headers: {
+      "Accept": "application/json",
+      "Authorization": `Basic ${authToken}`
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+
   return res.json();
 };
 
 export const useDocuments = () => {
+  const { authToken } = useAuthContext();
   const sortBy = useSortByStore((state) => state.activeElement);
 
   const query = useQuery({
     queryKey: ["documents", sortBy],
-    queryFn: getDocuments,
+    queryFn: () => getDocuments(authToken),
     staleTime: 30_000
   });
 

@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
 
 import { User } from "@/src/models/types";
 
@@ -9,7 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   isLoading: boolean;
-  getToken: string;
+  authToken: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,9 +27,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!user) {
         user = {
-          id: uuidv4(),
+          id: faker.string.uuid(),
           name: faker.person.fullName(),
-          email: faker.internet.email(),
+          email: faker.internet.email().toLowerCase(),
         } as User;
 
         await AsyncStorage.setItem('user', JSON.stringify(user));
@@ -44,9 +43,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getOrCreateFakeAuthData();
   }, []);
 
-  const getToken = useMemo(() => {
+  const authToken = useMemo(() => {
     if (isAuthenticated) {
-      return btoa(`${user?.email}:${user?.id}`);
+      return btoa(`${user?.name}:${user?.id}`);
     }
     return '';
   }, [isAuthenticated, user]);
@@ -55,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated,
     user,
     isLoading,
-    getToken,
+    authToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

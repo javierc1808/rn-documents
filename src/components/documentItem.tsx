@@ -1,17 +1,17 @@
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 import { ListByEnum } from "@/src/models/enums";
 import { Document } from "@/src/models/types";
 import { useListByStore } from "@/src/stores/useListByStore";
 
-export default function DocumentItem({ data }: { data: Document }) {
+export default function DocumentItem({ data, style }: { data: Document, style?: StyleProp<ViewStyle> }) {
   const { activeElement } = useListByStore();
 
   if (activeElement === ListByEnum.GRID) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.cardContainer, style]}>
         <View style={styles.gridTitleContainer}>
           <Text style={styles.title}>{data.title}</Text>
           <View style={styles.sizeBox} />
@@ -22,13 +22,12 @@ export default function DocumentItem({ data }: { data: Document }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.cardContainer, style]}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{data.title}</Text>
-        <View style={styles.sizeBox} />
-        <Text style={styles.version}>Version {data.version}</Text>
+        <Text style={styles.version} numberOfLines={1} ellipsizeMode="tail">Version {data.version}</Text>
       </View>
-      <View style={{ flexDirection: "row" }}>
+      <View style={styles.rowContainer}>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionTitleContainer}>
             <MaterialCommunityIcons
@@ -42,9 +41,9 @@ export default function DocumentItem({ data }: { data: Document }) {
           {data.contributors.map((contributor, index) => (
             <View
               key={`${contributor.id}-${index}`}
-              style={{ marginBottom: 8 }}
+              style={styles.separator}
             >
-              <Text style={{ fontSize: 14, color: "gray" }}>
+              <Text style={styles.title2}>
                 {contributor.name}
               </Text>
             </View>
@@ -57,8 +56,8 @@ export default function DocumentItem({ data }: { data: Document }) {
             <Text style={styles.descriptionTitle}>Attachments</Text>
           </View>
           {data.attachments.map((attachment, index) => (
-            <View key={`${attachment}-${index}`} style={{ marginBottom: 8 }}>
-              <Text style={{ fontSize: 14, color: "gray" }}>{attachment}</Text>
+            <View key={`${attachment}-${index}`} style={styles.separator}>
+              <Text style={styles.title2}>{attachment}</Text>
             </View>
           ))}
         </View>
@@ -68,26 +67,29 @@ export default function DocumentItem({ data }: { data: Document }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  cardContainer: {
+    flex: 1,
     backgroundColor: "white",
     padding: 20,
-    marginBottom: 16,
     borderRadius: 5,
   },
   gridTitleContainer: {
     alignItems: "flex-start",
-    marginBottom: 10,
   },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+    gap: 10,
   },
   title: {
+    flexShrink: 1,
     fontSize: 16,
     fontWeight: "bold",
   },
   version: {
+    flexShrink: 0,
+    textAlign: "center",
     fontSize: 12,
     color: "gray",
   },
@@ -106,5 +108,15 @@ const styles = StyleSheet.create({
   sizeBox: {
     width: 10,
     height: 10,
+  },
+  rowContainer: {
+    flexDirection: "row",
+  },
+  title2: {
+    fontSize: 14,
+    color: "gray",
+  },
+  separator: {
+    marginBottom: 8,
   },
 });

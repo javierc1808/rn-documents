@@ -1,12 +1,13 @@
-import { Button, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import CustomFooter from "@/src/components/CustomFooter";
 import DocumentList from "@/src/components/DocumentList";
 import ListBy from "@/src/components/ListBy";
 import SortBy from "@/src/components/SortBy";
 import { useTheme } from "@/src/hooks/useTheme";
 
-export default function DocumentScreen() {
+export default function HomeScreen() {
   const theme = useTheme();
 
   return (
@@ -15,15 +16,13 @@ export default function DocumentScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <View style={styles.sortListContainer}>
-        <SortBy/>
-        <ListBy/>
+        <SortBy />
+        <ListBy />
       </View>
 
-      <DocumentList/>
+      <DocumentList />
 
-      <View style={styles.footer}>
-        <Button title="Add document" onPress={() => {}} />
-      </View>
+      <CustomFooter />
     </SafeAreaView>
   );
 }
@@ -36,23 +35,5 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  contentContainer: {
-    padding: 16,
-  },
-  footer: {
-    padding: 20,
-    borderTopWidth: 0.5,
-    borderTopColor: "lightgray",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  footerText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  sizeBox: {
-    width: 10,
-    height: 10,
   },
 });
