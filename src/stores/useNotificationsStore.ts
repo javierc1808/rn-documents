@@ -24,13 +24,18 @@ interface NotificationsState {
 
 export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   items: [],
-  add: (n) =>
+  add: (n) => {
+    if (get().items.find((it) => it.documentId === n.documentId)) {
+      return get().items;
+    }
+
     set((s) => ({
       items: [
         { id: n.id || faker.string.uuid(), read: n.read || false, ...n },
         ...s.items,
       ],
-    })),
+    }));
+  },
   markRead: (id) =>
     set((s) => ({
       items: s.items.map((it) => (it.id === id ? { ...it, read: true } : it)),

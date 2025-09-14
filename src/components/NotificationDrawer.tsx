@@ -11,19 +11,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
 
 export default function NotificationsDrawer() {
-  const { items, markAllRead, markRead } = useNotificationsStore();
+  const { items, markAllRead, markRead, clear } = useNotificationsStore();
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Ionicons name="notifications" size={20} />
         <Text style={styles.headerTitle}>Notifications</Text>
-        <TouchableOpacity
+      </View>
+
+      <View style={styles.buttonsContainer}>
+      <TouchableOpacity
           onPress={markAllRead}
           style={styles.markAllButton}
-          accessibilityLabel="Mark all as read"
         >
-          <Text style={styles.markAllText}>Mark all</Text>
+          <Text style={styles.markAllText}>Mark all as read</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={clear}
+          style={styles.markAllButton}
+        >
+          <Text style={styles.markAllText}>Clear all</Text>
         </TouchableOpacity>
       </View>
 
@@ -96,11 +104,17 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   markAllButton: {
-    marginLeft: "auto",
-    paddingHorizontal: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
   },
   markAllText: {
     fontWeight: "600",
+    fontSize: 15,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 16,
   },
   emptyContainer: {
     flex: 1,

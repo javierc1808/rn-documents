@@ -62,6 +62,9 @@ export default function DocumentItem({ data, style }: { data: Document, style?: 
           ))}
         </View>
       </View>
+      <View>
+        {data.createdAt}
+      </View>
     </View>
   );
 }
