@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 
-import DocumentItem from "@/src/components/DocumentItem";
+import AnimatedDocumentItem from "@/src/components/AnimatedDocumentItem";
 import { SPACING, useDocumentList } from "@/src/hooks/useDocumentList";
 import { Document } from "@/src/models/types";
 
@@ -27,7 +27,12 @@ export default function DocumentList() {
     isGrid,
     columns,
     contentContainerStyle,
+    isAnimating,
+    handleAnimationComplete,
   } = useDocumentList();
+
+  // Determine if it's the initial load (no previous data and not animating)
+  const isInitialLoad = !isAnimating && (data?.length ?? 0) > 0;
 
   const renderItem = useCallback(
     ({ item, index }: { item: Document; index: number }) => {
@@ -43,14 +48,29 @@ export default function DocumentList() {
             }]}
             onLayout={onMeasureItem}
           >
-            <DocumentItem data={item} />
+            <AnimatedDocumentItem 
+              data={item} 
+              index={index}
+              isAnimating={isAnimating}
+              onAnimationComplete={index === 0 ? handleAnimationComplete : undefined}
+              isInitialLoad={isInitialLoad}
+            />
           </View>
         );
       }
 
-      return <DocumentItem data={item} style={styles.documentItemContainer} />;
+      return (
+        <AnimatedDocumentItem 
+          data={item} 
+          style={styles.documentItemContainer}
+          index={index}
+          isAnimating={isAnimating}
+          onAnimationComplete={index === 0 ? handleAnimationComplete : undefined}
+          isInitialLoad={isInitialLoad}
+        />
+      );
     },
-    [isGrid, columns, itemWidth, rowHeight, onMeasureItem]
+    [isGrid, columns, itemWidth, rowHeight, onMeasureItem, isAnimating, handleAnimationComplete, isInitialLoad]
   );
 
   if (isLoading && (data?.length ?? 0) === 0) {

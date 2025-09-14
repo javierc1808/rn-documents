@@ -57,7 +57,9 @@ export default function NotificationsDrawer() {
       <View style={styles.headerContainer}>
         <Ionicons name="notifications" size={20} />
         <Text style={styles.headerTitle}>Notifications</Text>
-        <Text style={styles.markAllButton}>({totalItemsUnread} unread)</Text>
+        {totalItemsUnread > 0 && (
+          <Text style={styles.markAllButton}>({totalItemsUnread} unread)</Text>
+        )}
       </View>
 
       <View style={styles.buttonsContainer}>

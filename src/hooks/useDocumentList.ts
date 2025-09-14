@@ -4,6 +4,7 @@ import { LayoutChangeEvent, useWindowDimensions } from "react-native";
 
 import { useDocuments } from "@/src/hooks/useDocuments";
 import { useListByStore } from "@/src/stores/useListByStore";
+import { useSortByStore } from "@/src/stores/useSortByStore";
 
 export const MIN_ITEM_WIDTH = 160;
 export const SPACING = 25;
@@ -14,8 +15,16 @@ export const useDocumentList = () => {
   const { width } = useWindowDimensions();
 
   const isGrid = useListByStore((state) => state.isGrid());
+  const isListAnimating = useListByStore((state) => state.isAnimating);
+  const setIsListAnimating = useListByStore((state) => state.setIsAnimating);
+  
+  const isSortAnimating = useSortByStore((state) => state.isAnimating);
+  const setIsSortAnimating = useSortByStore((state) => state.setIsAnimating);
+  
+  // Combine both animation states
+  const isAnimating = isListAnimating || isSortAnimating;
 
-  // columnas y ancho de ítem
+  // columns and item width
   const usable = Math.max(0, width - INSET * 2);
   const columns = isGrid
     ? Math.max(1, Math.floor((usable + SPACING) / (MIN_ITEM_WIDTH + SPACING)))
@@ -25,13 +34,22 @@ export const useDocumentList = () => {
     ? Math.floor((usable - SPACING * (columns - 1)) / columns)
     : usable;
 
-  // alturas máximas por fila
+  // maximum heights per row
   const [rowHeight, setRowHeight] = useState<number | null>(null);
 
-  // reset al cambiar columnas o dataset
+  // reset when columns or dataset change
   useEffect(() => {
     setRowHeight(null);
   }, [columns, data?.length]);
+
+  // Detect SortBy changes and activate animation
+  useEffect(() => {
+    if (isSortAnimating) {
+      // Animation is already activated from the store
+      // We only need to reset rowHeight to force re-render
+      setRowHeight(null);
+    }
+  }, [isSortAnimating]);
 
   const handleRetry = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -55,6 +73,11 @@ export const useDocumentList = () => {
     };
   }, [isGrid]);
 
+  const handleAnimationComplete = useCallback(() => {
+    setIsListAnimating(false);
+    setIsSortAnimating(false);
+  }, [setIsListAnimating, setIsSortAnimating]);
+
   return {
     data,
     isRefetching,
@@ -68,5 +91,7 @@ export const useDocumentList = () => {
     columns,
     isGrid,
     contentContainerStyle,
+    isAnimating,
+    handleAnimationComplete,
   };
 };

@@ -8,6 +8,16 @@ export default function ListBy() {
 
   const activeElement = useListByStore((state) => state.activeElement);
   const setActiveElement = useListByStore((state) => state.setActiveElement);
+  const setIsAnimating = useListByStore((state) => state.setIsAnimating);
+
+  const handleModeChange = (element: ListByEnum) => {
+    if (element !== activeElement) {
+      // Change mode immediately
+      setActiveElement(element);
+      // Start entry animation
+      setIsAnimating(true);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -16,7 +26,7 @@ export default function ListBy() {
           styles.elementContainer,
           activeElement === ListByEnum.LIST && styles.activeElementContainerList,
         ]}
-        onPress={() => setActiveElement(ListByEnum.LIST)}
+        onPress={() => handleModeChange(ListByEnum.LIST)}
       >
         <FontAwesome6
           name="list"
@@ -29,7 +39,7 @@ export default function ListBy() {
           styles.elementContainer,
           activeElement === ListByEnum.GRID && styles.activeElementContainerGrid,
         ]}
-        onPress={() => setActiveElement(ListByEnum.GRID)}
+        onPress={() => handleModeChange(ListByEnum.GRID)}
       >
         <MaterialCommunityIcons
           name="grid-large"

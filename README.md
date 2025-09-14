@@ -40,6 +40,10 @@ I chose **Expo** as the foundation since it is currently recommended by the Reac
 - [@react-native-async-storage/async-storage](#react-native-async-storageasync-storage)
 - [expo-notifications](#expo-notifications)
 - [@testing-library/react-native + jest](#testing-libraryreact-native--jest)
+- [react-native-toast-message](#react-native-toast-message)
+- [react-hook-form](#react-hook-form)
+- [@hookform/resolvers](#hookformresolvers)
+- [zod](#zod)
 
 ---
 
@@ -259,6 +263,96 @@ test('renders list', () => {
   render(<DocumentsScreen />);
   expect(screen.getByText(/Documents/i)).toBeTruthy();
 });
+```
+
+---
+
+### react-native-toast-message
+
+**Why**  
+**Toast notifications** for React Native with **Expo Go** support. Provides user feedback for actions (success, error, info) with customizable styling and positioning.
+
+**Alternatives**  
+- **react-native-simple-toast** — ✅ lightweight; ❌ limited customization.  
+- **react-native-toast-notifications** — ✅ more features; ❌ heavier bundle.  
+- **Custom modal/toast** — ✅ full control; ❌ more development time.
+
+**When to switch**  
+- Need advanced animations → custom implementation.  
+- Very simple use case → `react-native-simple-toast`.
+
+**Snippet**
+```tsx
+import Toast from 'react-native-toast-message';
+<Toast />
+// Usage: Toast.show({ type: 'success', text1: 'Document saved!' });
+```
+
+---
+
+### react-hook-form
+
+**Why**  
+**Performant** form library with minimal re-renders. Built-in validation, error handling, and TypeScript support. Reduces boilerplate compared to controlled components.
+
+**Alternatives**  
+- **Formik** — ✅ popular, mature; ❌ more re-renders, larger bundle.  
+- **React Hook Form** — ✅ performance; ❌ steeper learning curve.  
+- **Controlled components** — ✅ simple; ❌ lots of boilerplate for complex forms.
+
+**When to switch**  
+- Very simple forms → controlled components.  
+- Heavy form validation needs → consider Formik with Yup.
+
+**Snippet**
+```tsx
+import { useForm } from 'react-hook-form';
+const { control, handleSubmit, formState: { errors } } = useForm();
+```
+
+---
+
+### @hookform/resolvers
+
+**Why**  
+**Validation resolvers** for react-hook-form. Integrates with popular validation libraries (Zod, Yup, Joi) for type-safe form validation.
+
+**Alternatives**  
+- **Built-in validation** — ✅ simple; ❌ limited features.  
+- **Custom validation** — ✅ full control; ❌ more development time.  
+- **Yup resolver** — ✅ mature; ❌ larger bundle than Zod.
+
+**When to switch**  
+- Simple validation needs → built-in validation.  
+- Complex validation rules → consider Yup for more features.
+
+**Snippet**
+```tsx
+import { zodResolver } from '@hookform/resolvers/zod';
+const form = useForm({ resolver: zodResolver(schema) });
+```
+
+---
+
+### zod
+
+**Why**  
+**TypeScript-first** schema validation. Compile-time type inference, runtime validation, and excellent developer experience. Lightweight and tree-shakeable.
+
+**Alternatives**  
+- **Yup** — ✅ mature, feature-rich; ❌ larger bundle, less TypeScript integration.  
+- **Joi** — ✅ powerful validation; ❌ Node.js focused, larger bundle.  
+- **io-ts** — ✅ functional approach; ❌ steeper learning curve.
+
+**When to switch**  
+- Need advanced validation features → Yup.  
+- Functional programming preference → io-ts.  
+- Very simple validation → built-in validation.
+
+**Snippet**
+```ts
+import { z } from 'zod';
+const schema = z.object({ name: z.string().min(1), email: z.string().email() });
 ```
 
 > Many of these features could be implemented from scratch, but using well-tested libraries improves efficiency and maintainability, applying the principle of **reliable code reuse**.

@@ -1,4 +1,7 @@
 #yarn test
+
 yarn lint
 yarn typecheck
+
+npx expo-doctor
 

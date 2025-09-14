@@ -20,3 +20,12 @@ export type User = {
   name: string;
   email: string;
 };
+
+export type NotificationMessage = {
+  type: string;
+  userName: string;
+  userId: string;
+  documentId: string;
+  documentTitle: string;
+  timestamp: string;
+};

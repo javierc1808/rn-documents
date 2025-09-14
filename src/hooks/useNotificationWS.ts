@@ -5,6 +5,7 @@ import { AppState } from "react-native";
 
 import { useAuthContext } from "@/src/context/AuthContext";
 import { useStackLayout } from "@/src/hooks/useStackLayout";
+import { NotificationMessage } from "@/src/models/types";
 import LocalNotificationService from "@/src/services/LocalNotificationService";
 import ToastService from "@/src/services/ToastService";
 import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
@@ -40,7 +41,7 @@ export function useDocumentsWS(url: string) {
 
         ws.onmessage = async (ev) => {
           try {
-            const msg = JSON.parse(ev.data);
+            const msg = JSON.parse(ev.data) as NotificationMessage;
 
             console.log(msg);
 
@@ -58,10 +59,10 @@ export function useDocumentsWS(url: string) {
 
               // Background notification
               useNotificationsStore.getState().add({
-                userName: msg.user_name,
-                userId: msg.user_id,
-                documentId: msg.document_id,
-                documentTitle: msg.document_title,
+                userName: msg.userName,
+                userId: msg.userId,
+                documentId: msg.documentId,
+                documentTitle: msg.documentTitle,
                 type: msg.type,
                 createdAt: new Date(msg.timestamp).toISOString(),
               });
@@ -73,14 +74,14 @@ export function useDocumentsWS(url: string) {
               if (AppState.currentState === "active") {
                 ToastService.show(
                   "📄 New document",
-                  `${msg.user_name} added "${msg.document_title}" (${typeNotification})`,
+                  `${msg.userName} added "${msg.documentTitle}" (${typeNotification})`,
                   "info"
                 );
               } else {
                 if (LocalNotificationService.isValid) {
                   LocalNotificationService.scheduleNotificationAsync(
                     "📄 New document",
-                    `${msg.user_name} added "${msg.document_title}" (${typeNotification})`,
+                    `${msg.userName} added "${msg.documentTitle}" (${typeNotification})`,
                     msg
                   );
                 }
@@ -144,25 +145,25 @@ export function useDocumentsWS(url: string) {
     };
   }, [url, queryClient, authToken]);
 
-  // Listener para manejar cuando se presiona una notificación
+  // Listener to handle when a notification is pressed
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       const data = response.notification.request.content.data;
       console.log("DATA", data);
-      // Si la notificación tiene un documentId, buscar la notificación correspondiente
+      // If the notification has a documentId, search for the corresponding notification
       if (data && data.document_id) {
         const notifications = useNotificationsStore.getState().items;
         const notification = notifications.find(n => n.documentId === data.document_id);
 
         if (notification) {
-          // Abrir el drawer y hacer scroll a la notificación específica
+          // Open drawer and scroll to specific notification
           openNotifications(notification.id);
         } else {
-          // Si no se encuentra la notificación, abrir el drawer normalmente
+          // If notification is not found, open drawer normally
           openNotifications();
         }
       } else {
-        // Si no hay data específica, abrir el drawer normalmente
+        // If there's no specific data, open drawer normally
         openNotifications();
       }
     });

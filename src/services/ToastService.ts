@@ -15,6 +15,13 @@ class ToastService {
       type: type,
       text1: title,
       text2: message,
+      text1Style: {
+        fontSize: 16,
+        fontWeight: "bold",
+      },
+      text2Style: {
+        fontSize: 14,
+      },
       position: "bottom",
       swipeable: true,
       visibilityTime: 5000,

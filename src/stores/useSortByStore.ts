@@ -4,27 +4,42 @@ import { SortByEnum } from "@/src/models/enums";
 
 interface SortByStore {
   activeElement: SortByEnum;
+  isAnimating: boolean;
   setActiveElement: (element: SortByEnum) => void;
   handlePress: () => void;
+  setIsAnimating: (animating: boolean) => void;
 }
 
 export const useSortByStore = create<SortByStore>((set) => ({
   activeElement: SortByEnum.RECENT,
+  isAnimating: false,
   setActiveElement: (element) => set({ activeElement: element }),
+  setIsAnimating: (animating) => set({ isAnimating: animating }),
   handlePress: () => {
     set((state) => {
+      let newElement: SortByEnum;
       switch (state.activeElement) {
         case SortByEnum.RECENT:
-          return { activeElement: SortByEnum.OLDEST };
+          newElement = SortByEnum.OLDEST;
+          break;
         case SortByEnum.OLDEST:
-          return { activeElement: SortByEnum.AZ };
+          newElement = SortByEnum.AZ;
+          break;
         case SortByEnum.AZ:
-          return { activeElement: SortByEnum.ZA };
+          newElement = SortByEnum.ZA;
+          break;
         case SortByEnum.ZA:
-          return { activeElement: SortByEnum.RECENT };
+          newElement = SortByEnum.RECENT;
+          break;
         default:
-          return { activeElement: SortByEnum.RECENT };
+          newElement = SortByEnum.RECENT;
       }
-    })
+      
+      // Change element and activate animation
+      return { 
+        activeElement: newElement,
+        isAnimating: true
+      };
+    });
   }
 }));
