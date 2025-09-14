@@ -14,16 +14,23 @@ interface Notification {
 
 interface NotificationsState {
   items: Notification[];
+  scrollToNotificationId: string | null;
+  totalItemsUnread: () => number;
   add: (
     n: Omit<Notification, "id" | "read"> & { id?: string; read?: boolean }
   ) => void;
   markRead: (id: string) => void;
   markAllRead: () => void;
   clear: () => void;
+  setScrollToNotification: (id: string | null) => void;
 }
 
 export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   items: [],
+  scrollToNotificationId: null,
+  totalItemsUnread: () => {
+    return get().items.filter((it) => !it.read).length
+  },
   add: (n) => {
     if (get().items.find((it) => it.documentId === n.documentId)) {
       return get().items;
@@ -43,4 +50,5 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   markAllRead: () =>
     set((s) => ({ items: s.items.map((it) => ({ ...it, read: true })) })),
   clear: () => set({ items: [] }),
+  setScrollToNotification: (id) => set({ scrollToNotificationId: id }),
 }));

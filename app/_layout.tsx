@@ -1,6 +1,7 @@
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 import { AuthProvider } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/hooks/useTheme";
@@ -18,6 +19,8 @@ export default function RootLayout() {
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <NavigationContainer />
+
+          <Toast />
         </QueryClientProvider>
       </AuthProvider>
     </ThemeProvider>

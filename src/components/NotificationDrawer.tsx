@@ -9,15 +9,55 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
+import { useCallback, useEffect, useRef } from "react";
 
 export default function NotificationsDrawer() {
-  const { items, markAllRead, markRead, clear } = useNotificationsStore();
+  const totalItemsUnread = useNotificationsStore(state => state.totalItemsUnread());
+  const items = useNotificationsStore(state => state.items);
+  const markAllRead = useNotificationsStore(state => state.markAllRead);
+  const markRead = useNotificationsStore(state => state.markRead);
+  const clear = useNotificationsStore(state => state.clear);
+  const scrollToNotificationId = useNotificationsStore(state => state.scrollToNotificationId);
+  const setScrollToNotification = useNotificationsStore(state => state.setScrollToNotification);
+
+  const flatListRef = useRef<FlatList>(null);
+
+  // Effect to handle automatic scroll when a specific notification is specified
+  useEffect(() => {
+    if (scrollToNotificationId && items.length > 0) {
+      const notificationIndex = items.findIndex(item => item.id === scrollToNotificationId);
+      if (notificationIndex !== -1 && flatListRef.current) {
+        // Small delay to ensure the drawer is completely open
+        setTimeout(() => {
+          flatListRef.current?.scrollToIndex({
+            index: notificationIndex,
+            animated: true,
+            viewPosition: 0.5, // Center the notification in the view
+          });
+
+          // Clear the scrollToNotificationId after completing the scroll
+          setTimeout(() => {
+            setScrollToNotification(null);
+          }, 1000);
+        }, 300);
+      }
+    }
+  }, [scrollToNotificationId, items, setScrollToNotification]);
+
+  const formatType = useCallback((type: string) => {
+    return type === "document.created" ? "REAL" : "FAKE";
+  }, []);
+
+  const handleMarkRead = useCallback((id: string) => {
+    markRead(id);
+  }, [markRead]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Ionicons name="notifications" size={20} />
         <Text style={styles.headerTitle}>Notifications</Text>
+        <Text style={styles.markAllButton}>({totalItemsUnread} unread)</Text>
       </View>
 
       <View style={styles.buttonsContainer}>
@@ -36,6 +76,7 @@ export default function NotificationsDrawer() {
       </View>
 
       <FlatList
+        ref={flatListRef}
         data={items}
         // data={[
         //   {
@@ -65,14 +106,25 @@ export default function NotificationsDrawer() {
           </View>
         )}
         showsVerticalScrollIndicator={false}
+        onScrollToIndexFailed={(info) => {
+          // Handle scroll to index failed
+          console.log('Scroll to index failed:', info);
+          // Try to scroll to a nearby position
+          setTimeout(() => {
+            flatListRef.current?.scrollToOffset({
+              offset: info.averageItemLength * info.index,
+              animated: true,
+            });
+          }, 100);
+        }}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => markRead(item.id)}
+            onPress={() => handleMarkRead(item.id)}
             style={[styles.notificationItem, { opacity: item.read ? 0.5 : 1 }]}
             accessibilityLabel={`Notification: ${item.documentTitle}`}
           >
             <Text style={{ fontWeight: item.read ? "400" : "600" }}>
-              {item.documentTitle}
+              {item.documentTitle} ({formatType(item.type)})
             </Text>
             {item.userName && (
               <Text numberOfLines={2} style={styles.notificationBody}>

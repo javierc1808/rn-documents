@@ -6,11 +6,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useStackLayout } from "@/src/hooks/useStackLayout";
 
 export default function StackLayout() {
-  const { totalItems, formatTotalItems, openNotifications } = useStackLayout();
+  const { totalItemsUnread, formatTotalItems, openNotifications } = useStackLayout();
 
   const notificationBadgeContainerStyle = useMemo(
-    () => [styles.notificationBadgeContainer, totalItems > 99 && { left: 12 }],
-    [totalItems]
+    () => [styles.notificationBadgeContainer, totalItemsUnread > 99 && { left: 12 }],
+    [totalItemsUnread]
   );
 
   return (
@@ -22,12 +22,12 @@ export default function StackLayout() {
           headerTitleStyle: styles.headerTitle,
           headerRight: () => (
             <TouchableOpacity
-              onPress={openNotifications}
+              onPress={() => openNotifications()}
               hitSlop={10}
               accessibilityLabel="Open notifications"
               style={styles.container}
             >
-              {totalItems > 0 && (
+              {totalItemsUnread > 0 && (
                 <View style={notificationBadgeContainerStyle}>
                   <View style={styles.notificationBadge}>
                     <Text style={styles.notificationBadgeText}>

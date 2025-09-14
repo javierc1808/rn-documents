@@ -1,12 +1,18 @@
 import { useQueryClient } from "@tanstack/react-query";
 import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
-import { useAuthContext } from "../context/AuthContext";
-import { useNotificationsStore } from "../stores/useNotificationsStore";
+import { AppState } from "react-native";
+
+import { useAuthContext } from "@/src/context/AuthContext";
+import { useStackLayout } from "@/src/hooks/useStackLayout";
+import LocalNotificationService from "@/src/services/LocalNotificationService";
+import ToastService from "@/src/services/ToastService";
+import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
 
 export function useDocumentsWS(url: string) {
   const queryClient = useQueryClient();
   const { authToken } = useAuthContext();
+  const { openNotifications } = useStackLayout();
 
   useEffect(() => {
     let ws: WebSocket | null = null;
@@ -15,18 +21,6 @@ export function useDocumentsWS(url: string) {
     const maxReconnectAttempts = 10; // Maximum attempts before increasing the delay
     const baseDelay = 1000; // Base delay of 1 second
     const maxDelay = 30000; // Maximum delay of 30 seconds
-    let isConnected = false;
-
-    // First, set the handler that will cause the notification
-    // to show the alert
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldPlaySound: false,
-        shouldSetBadge: false,
-        shouldShowBanner: true,
-        shouldShowList: true,
-      }),
-    });
 
     const connect = () => {
       if (ws && ws.readyState === WebSocket.OPEN) {
@@ -35,26 +29,32 @@ export function useDocumentsWS(url: string) {
 
       try {
         ws = new WebSocket(url);
-        console.log(`Attempting to connect to WebSocket (attempt ${reconnectAttempts + 1})`);
+        console.log(
+          `Attempting to connect to WebSocket (attempt ${reconnectAttempts + 1})`
+        );
 
         ws.onopen = () => {
           console.log("WebSocket connected successfully");
-          isConnected = true;
           reconnectAttempts = 0; // Reset attempts on successful connection
         };
 
-        ws.onmessage = (ev) => {
+        ws.onmessage = async (ev) => {
           try {
             const msg = JSON.parse(ev.data);
 
             console.log(msg);
 
-            if (msg.type === "document.created" || msg.type === "document.created.fake") {
-              // Invalidate to refresh
-              // queryClient.invalidateQueries({ queryKey: ["documents"] });
+            if (
+              msg.type === "document.created" ||
+              msg.type === "document.created.fake"
+            ) {
+              const typeNotification =
+                msg.type === "document.created.fake" ? "FAKE" : "REAL";
 
-              // Optional: emit local event for UI/Toast
-              //showInAppToast(`New document: ${msg.payload.name}`);
+              // Invalidate to refresh
+              if (typeNotification === "REAL") {
+                queryClient.invalidateQueries({ queryKey: ["documents"] });
+              }
 
               // Background notification
               useNotificationsStore.getState().add({
@@ -66,24 +66,33 @@ export function useDocumentsWS(url: string) {
                 createdAt: new Date(msg.timestamp).toISOString(),
               });
 
+              if (LocalNotificationService.canShowNotification) {
+                await LocalNotificationService.validatePermissions();
+              }
 
-              const type = msg.type === "document.created.fake" ? "FAKE" : "REAL";
-
-              // Second, call scheduleNotificationAsync()
-              sendNotification(
-                "📄 New document",
-                `${msg.user_name} added "${msg.document_title}" (${type})`,
-                msg
-              );
+              if (AppState.currentState === "active") {
+                ToastService.show(
+                  "📄 New document",
+                  `${msg.user_name} added "${msg.document_title}" (${typeNotification})`,
+                  "info"
+                );
+              } else {
+                if (LocalNotificationService.isValid) {
+                  LocalNotificationService.scheduleNotificationAsync(
+                    "📄 New document",
+                    `${msg.user_name} added "${msg.document_title}" (${typeNotification})`,
+                    msg
+                  );
+                }
+              }
             }
           } catch (error) {
-            console.error("Error parsing WebSocket message:", error);
+            console.log("Error parsing WebSocket message:", error);
           }
         };
 
         ws.onclose = (event) => {
           console.log("WebSocket closed", event.code, event.reason);
-          isConnected = false;
 
           // Only reconnect if it was not an intentional close
           if (event.code !== 1000) {
@@ -92,12 +101,10 @@ export function useDocumentsWS(url: string) {
         };
 
         ws.onerror = (ev) => {
-          console.error("WebSocket error", ev);
-          isConnected = false;
+          console.log("WebSocket error:", ev);
         };
-
       } catch (error) {
-        console.error("Error creating WebSocket:", error);
+        console.log("Error creating WebSocket:", error);
         scheduleReconnect();
       }
     };
@@ -109,11 +116,14 @@ export function useDocumentsWS(url: string) {
 
       // Calculate delay with exponential backoff
       const delay = Math.min(
-        baseDelay * Math.pow(2, Math.min(reconnectAttempts, maxReconnectAttempts)),
+        baseDelay *
+          Math.pow(2, Math.min(reconnectAttempts, maxReconnectAttempts)),
         maxDelay
       );
 
-      console.log(`Scheduling reconnection in ${delay}ms (attempt ${reconnectAttempts + 1})`);
+      console.log(
+        `Scheduling reconnection in ${delay}ms (attempt ${reconnectAttempts + 1})`
+      );
 
       reconnectTimeout = setTimeout(() => {
         reconnectAttempts++;
@@ -125,7 +135,6 @@ export function useDocumentsWS(url: string) {
     connect();
 
     return () => {
-      isConnected = false;
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
       }
@@ -134,36 +143,33 @@ export function useDocumentsWS(url: string) {
       }
     };
   }, [url, queryClient, authToken]);
+
+  // Listener para manejar cuando se presiona una notificación
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const data = response.notification.request.content.data;
+      console.log("DATA", data);
+      // Si la notificación tiene un documentId, buscar la notificación correspondiente
+      if (data && data.document_id) {
+        const notifications = useNotificationsStore.getState().items;
+        const notification = notifications.find(n => n.documentId === data.document_id);
+
+        if (notification) {
+          // Abrir el drawer y hacer scroll a la notificación específica
+          openNotifications(notification.id);
+        } else {
+          // Si no se encuentra la notificación, abrir el drawer normalmente
+          openNotifications();
+        }
+      } else {
+        // Si no hay data específica, abrir el drawer normalmente
+        openNotifications();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [openNotifications]);
 }
 
-function sendNotification(title: string, body: string, data: any) {
-  Notifications.getPermissionsAsync().then((permissions) => {
-    console.log("permissions", permissions);
-    if (permissions.status !== "granted") {
-      Notifications.requestPermissionsAsync().then((permissions) => {
-        console.log("permissions", permissions);
-        Notifications.scheduleNotificationAsync({
-          content: { title,  body, data },
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-            seconds: 2,
-          },
-        });
-      }).catch((error) => {
-        console.error("Error requesting permissions:", error);
-      });
-    }
-    else {
-      Notifications.scheduleNotificationAsync({
-        content: { title, body, data },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: 2,
-        },
-      });
-    }
-  })
-  .catch((error) => {
-    console.error("Error sending notification:", error);
-  });
-}

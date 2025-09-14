@@ -6,21 +6,30 @@ import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
 
 export const useStackLayout = () => {
   const navigation = useNavigation();
-  const totalItems = useNotificationsStore(state => state.items.length);
+  const totalItemsUnread = useNotificationsStore(state => state.totalItemsUnread());
+  const setScrollToNotification = useNotificationsStore(state => state.setScrollToNotification);
 
   const formatTotalItems = useMemo(
-    () => (totalItems > 99 ? "99+" : totalItems),
-    [totalItems]
+    () => (totalItemsUnread > 99 ? "99+" : totalItemsUnread.toString()),
+    [totalItemsUnread]
   );
 
-  const openNotifications = async () => {
+  const openNotifications = async (notificationId?: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    // If a notification is specified, configure automatic scroll
+    if (notificationId) {
+      setScrollToNotification(notificationId);
+    } else {
+      // Clear automatic scroll if no notification is specified
+      setScrollToNotification(null);
+    }
 
     navigation.dispatch(DrawerActions.openDrawer());
   };
 
   return {
-    totalItems,
+    totalItemsUnread,
     formatTotalItems,
     openNotifications,
   };

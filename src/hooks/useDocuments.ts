@@ -93,7 +93,7 @@ export const useCreateDocument = () => {
       queryClient.invalidateQueries({ queryKey: ["documents"] });
     },
     onError: (error: Error) => {
-      console.error(error);
+      console.log(error);
     },
   });
 

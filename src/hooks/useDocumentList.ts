@@ -1,8 +1,9 @@
-import { useListByStore } from "@/src/stores/useListByStore";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LayoutChangeEvent, useWindowDimensions } from "react-native";
-import { useDocuments } from "./useDocuments";
+
+import { useDocuments } from "@/src/hooks/useDocuments";
+import { useListByStore } from "@/src/stores/useListByStore";
 
 export const MIN_ITEM_WIDTH = 160;
 export const SPACING = 25;
