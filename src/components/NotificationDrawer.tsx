@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useCallback, useEffect, useRef } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -9,23 +10,31 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
-import { useCallback, useEffect, useRef } from "react";
+import { formatRelativeTime } from "../utils/dateFormat";
 
 export default function NotificationsDrawer() {
-  const totalItemsUnread = useNotificationsStore(state => state.totalItemsUnread());
-  const items = useNotificationsStore(state => state.items);
-  const markAllRead = useNotificationsStore(state => state.markAllRead);
-  const markRead = useNotificationsStore(state => state.markRead);
-  const clear = useNotificationsStore(state => state.clear);
-  const scrollToNotificationId = useNotificationsStore(state => state.scrollToNotificationId);
-  const setScrollToNotification = useNotificationsStore(state => state.setScrollToNotification);
+  const totalItemsUnread = useNotificationsStore((state) =>
+    state.totalItemsUnread()
+  );
+  const items = useNotificationsStore((state) => state.items);
+  const markAllRead = useNotificationsStore((state) => state.markAllRead);
+  const markRead = useNotificationsStore((state) => state.markRead);
+  const clear = useNotificationsStore((state) => state.clear);
+  const scrollToNotificationId = useNotificationsStore(
+    (state) => state.scrollToNotificationId
+  );
+  const setScrollToNotification = useNotificationsStore(
+    (state) => state.setScrollToNotification
+  );
 
   const flatListRef = useRef<FlatList>(null);
 
   // Effect to handle automatic scroll when a specific notification is specified
   useEffect(() => {
     if (scrollToNotificationId && items.length > 0) {
-      const notificationIndex = items.findIndex(item => item.id === scrollToNotificationId);
+      const notificationIndex = items.findIndex(
+        (item) => item.id === scrollToNotificationId
+      );
       if (notificationIndex !== -1 && flatListRef.current) {
         // Small delay to ensure the drawer is completely open
         setTimeout(() => {
@@ -48,9 +57,12 @@ export default function NotificationsDrawer() {
     return type === "document.created" ? "REAL" : "FAKE";
   }, []);
 
-  const handleMarkRead = useCallback((id: string) => {
-    markRead(id);
-  }, [markRead]);
+  const handleMarkRead = useCallback(
+    (id: string) => {
+      markRead(id);
+    },
+    [markRead]
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,20 +75,13 @@ export default function NotificationsDrawer() {
       </View>
 
       <View style={styles.buttonsContainer}>
-      <TouchableOpacity
-          onPress={markAllRead}
-          style={styles.markAllButton}
-        >
+        <TouchableOpacity onPress={markAllRead} style={styles.markAllButton}>
           <Text style={styles.markAllText}>Mark all as read</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={clear}
-          style={styles.markAllButton}
-        >
+        <TouchableOpacity onPress={clear} style={styles.markAllButton}>
           <Text style={styles.markAllText}>Clear all</Text>
         </TouchableOpacity>
       </View>
-
       <FlatList
         ref={flatListRef}
         data={items}
@@ -89,7 +94,7 @@ export default function NotificationsDrawer() {
         )}
         onScrollToIndexFailed={(info) => {
           // Handle scroll to index failed
-          console.log('Scroll to index failed:', info);
+          console.log("Scroll to index failed:", info);
           // Try to scroll to a nearby position
           setTimeout(() => {
             flatListRef.current?.scrollToOffset({
@@ -113,7 +118,9 @@ export default function NotificationsDrawer() {
               </Text>
             )}
             {item.createdAt && (
-              <Text style={styles.notificationTime}>{item.createdAt}</Text>
+              <Text style={styles.notificationTime}>
+                {formatRelativeTime(item.createdAt)}
+              </Text>
             )}
           </TouchableOpacity>
         )}

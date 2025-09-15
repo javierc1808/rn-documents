@@ -1,9 +1,10 @@
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
+import React, { useMemo } from "react";
 import { Animated, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 import { useAnimatedDocumentItem } from "@/src/hooks/useAnimatedDocumentItem";
 import { Document } from "@/src/models/types";
+import { formatRelativeTime } from "../utils/dateFormat";
 
 interface AnimatedDocumentItemProps {
   data: Document;
@@ -22,12 +23,14 @@ export default function AnimatedDocumentItem({
   onAnimationComplete,
   isInitialLoad = false
 }: AnimatedDocumentItemProps) {
-  const { animatedStyle, formatRelativeTime, isGridMode } = useAnimatedDocumentItem({
+  const { animatedStyle, isGridMode } = useAnimatedDocumentItem({
     index,
     isAnimating,
     onAnimationComplete,
     isInitialLoad,
   });
+
+  const formatRelativeTimeMemo = useMemo(() => formatRelativeTime(data.createdAt), [data]);
 
   if (isGridMode) {
     return (
@@ -38,7 +41,7 @@ export default function AnimatedDocumentItem({
           <Text style={styles.version}>Version {data.version}</Text>
         </View>
         <View style={styles.gridDateContainer}>
-          <Text style={styles.dateText}>{formatRelativeTime(data.createdAt)}</Text>
+          <Text style={styles.dateText}>{formatRelativeTimeMemo}</Text>
         </View>
       </Animated.View>
     );

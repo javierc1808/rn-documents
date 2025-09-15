@@ -1,6 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack } from "expo-router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { useStackLayout } from "@/src/hooks/useStackLayout";
@@ -13,6 +13,10 @@ export default function StackLayout() {
     [totalItemsUnread]
   );
 
+  const handleOpenNotifications = useCallback(() => {
+    openNotifications();
+  }, [openNotifications]);
+
   return (
     <Stack screenOptions={{ headerShown: true }}>
       <Stack.Screen
@@ -22,7 +26,7 @@ export default function StackLayout() {
           headerTitleStyle: styles.headerTitle,
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => openNotifications()}
+              onPress={handleOpenNotifications}
               hitSlop={10}
               accessibilityLabel="Open notifications"
               style={styles.container}
@@ -48,7 +52,7 @@ export default function StackLayout() {
       <Stack.Screen
         name="add-document"
         options={{
-          headerTitle: "Add document",
+          headerShown: false,
           presentation: "modal",
         }}
       />

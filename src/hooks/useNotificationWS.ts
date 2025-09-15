@@ -1,19 +1,16 @@
 import { useQueryClient } from "@tanstack/react-query";
-import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
 import { AppState } from "react-native";
 
 import { useAuthContext } from "@/src/context/AuthContext";
-import { useStackLayout } from "@/src/hooks/useStackLayout";
 import { NotificationMessage } from "@/src/models/types";
 import LocalNotificationService from "@/src/services/LocalNotificationService";
 import ToastService from "@/src/services/ToastService";
 import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
 
-export function useDocumentsWS() {
+export function useNotificationWS() {
   const queryClient = useQueryClient();
-  const { authToken } = useAuthContext();
-  const { openNotifications } = useStackLayout();
+  const { authToken, user } = useAuthContext();
 
   useEffect(() => {
     const url = process.env.EXPO_PUBLIC_WS_URL || "ws://localhost:8080";
@@ -44,11 +41,11 @@ export function useDocumentsWS() {
           try {
             const msg = JSON.parse(ev.data) as NotificationMessage;
 
-            console.log(msg);
+            console.log( "msg", msg);
 
             if (
-              msg.type === "document.created" ||
-              msg.type === "document.created.fake"
+              (msg.type === "document.created" ||
+                msg.type === "document.created.fake") && msg.userId !== user?.id
             ) {
               const typeNotification =
                 msg.type === "document.created.fake" ? "FAKE" : "REAL";
@@ -144,34 +141,5 @@ export function useDocumentsWS() {
         ws.close(1000, "Component unmounting"); // Intentional close
       }
     };
-  }, [queryClient, authToken]);
-
-  // Listener to handle when a notification is pressed
-  useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const data = response.notification.request.content.data;
-      console.log("DATA", data);
-      // If the notification has a documentId, search for the corresponding notification
-      if (data && data.document_id) {
-        const notifications = useNotificationsStore.getState().items;
-        const notification = notifications.find(n => n.documentId === data.document_id);
-
-        if (notification) {
-          // Open drawer and scroll to specific notification
-          openNotifications(notification.id);
-        } else {
-          // If notification is not found, open drawer normally
-          openNotifications();
-        }
-      } else {
-        // If there's no specific data, open drawer normally
-        openNotifications();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, [openNotifications]);
+  }, [queryClient, authToken, user]);
 }
-

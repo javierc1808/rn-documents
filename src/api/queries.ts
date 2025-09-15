@@ -1,6 +1,7 @@
+import { faker } from "@faker-js/faker";
 import { useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { useAuthContext } from "../context/AuthContext";
-import { CreateDocumentDTO, Document } from "../models/types";
+import { CreateDocumentDTO, Document, User } from "../models/types";
 import { useSortByStore } from "../stores/useSortByStore";
 
 const getDocuments = async (authToken: string): Promise<Document[]> => {
@@ -21,9 +22,29 @@ const getDocuments = async (authToken: string): Promise<Document[]> => {
 };
 
 const createDocument = async (
+  user: User,
   authToken: string,
   document: CreateDocumentDTO
 ): Promise<Document> => {
+
+  const documentToCreate : Omit<Document, "updatedAt"> = {
+    id: faker.string.uuid(),
+    createdAt: new Date().toISOString(),
+    contributors: [
+    {
+      id: user.id,
+      name: user.name,
+    },
+    {
+      id: faker.string.uuid(),
+      name: faker.person.fullName(),
+    },
+  ],
+    attachments: document.files,
+    title: document.name,
+    version: document.version,
+  };
+
   const url = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";
   const res = await fetch(url + "/documents", {
     method: "POST",
@@ -32,7 +53,7 @@ const createDocument = async (
       Accept: "application/json",
       Authorization: `Basic ${authToken}`,
     },
-    body: JSON.stringify(document),
+    body: JSON.stringify(documentToCreate),
   });
 
   if (!res.ok) {
@@ -56,12 +77,12 @@ export const useGetDocumentsQuery = () : UseQueryResult<Document[], Error> => {
 };
 
 export const useCreateDocumentMutation = () : UseMutationResult<Document, Error, CreateDocumentDTO> => {
-  const { authToken } = useAuthContext();
+  const { user, authToken } = useAuthContext();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (document: CreateDocumentDTO) =>
-      createDocument(authToken, document),
+      createDocument(user!, authToken, document),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["documents"] });
     },

@@ -5,12 +5,10 @@ import CustomFooter from "@/src/components/CustomFooter";
 import DocumentList from "@/src/components/DocumentList";
 import ListBy from "@/src/components/ListBy";
 import SortBy from "@/src/components/SortBy";
-import { useDocumentsWS } from "@/src/hooks/useNotificationWS";
 import { useTheme } from "@/src/hooks/useTheme";
 
 export default function DocumentsScreen() {
   const theme = useTheme();
-  useDocumentsWS();
 
   return (
     <SafeAreaView

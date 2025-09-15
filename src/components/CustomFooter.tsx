@@ -1,17 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
-import { Button, StyleSheet, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function CustomFooter() {
   const { navigate } = useNavigation();
 
-  return <View style={styles.container}>
-  <Button
-    title="Add document"
-    onPress={() => {
-      navigate("add-document" as never);
-    }}
-  />
-</View>
+  const handleAddDocument = () => {
+    navigate("add-document" as never);
+  };
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.containerButton}
+        onPress={handleAddDocument}
+      >
+        <Text style={styles.buttonText}>Add document</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -22,8 +28,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  containerButton: {
+    width: "100%",
+    backgroundColor: "#007AFF",
+    borderRadius: 8,
+    padding: 16,
+    alignItems: "center",
+  },
   buttonText: {
-    fontSize: 18,
-    fontWeight: "bold",
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

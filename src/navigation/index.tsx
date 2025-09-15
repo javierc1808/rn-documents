@@ -6,9 +6,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import NotificationDrawer from "@/src/components/NotificationDrawer";
 import { useAuthContext } from "@/src/context/AuthContext";
+import { useNotificationWS } from "../hooks/useNotificationWS";
 
 const NavigationContainer = () => {
   const { isLoading } = useAuthContext();
+  useNotificationWS();
 
   // Show loading while authentication is being verified
   if (isLoading) {
@@ -23,6 +25,7 @@ const NavigationContainer = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <Drawer
+          initialRouteName="(stack)"
           screenOptions={drawerOptions}
           drawerContent={() => <NotificationDrawer />}
         >

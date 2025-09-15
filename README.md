@@ -44,6 +44,7 @@ I chose **Expo** as the foundation since it is currently recommended by the Reac
 - [react-hook-form](#react-hook-form)
 - [@hookform/resolvers](#hookformresolvers)
 - [zod](#zod)
+- [expo-document-picker](#expo-document-picker)
 
 ---
 
@@ -353,6 +354,40 @@ const form = useForm({ resolver: zodResolver(schema) });
 ```ts
 import { z } from 'zod';
 const schema = z.object({ name: z.string().min(1), email: z.string().email() });
+```
+
+---
+
+### expo-document-picker
+
+**Why**  
+**Native file selection** for React Native with **Expo Go** support. Allows users to pick documents from their device storage with a native file picker interface. Essential for the "Add Document" feature where users need to attach files to new documents.
+
+**Alternatives**  
+- **react-native-document-picker** — ✅ more features; ❌ requires custom native code, not compatible with Expo Go.  
+- **expo-image-picker** — ✅ good for images; ❌ limited to images only.  
+- **react-native-fs** — ✅ file system access; ❌ more complex, requires native setup.
+
+**When to switch**  
+- Need advanced file operations → react-native-document-picker.  
+- Only handling images → expo-image-picker.  
+- Custom file system access → react-native-fs.
+
+**Snippet**
+```tsx
+import * as DocumentPicker from 'expo-document-picker';
+
+const handleFileSelection = async () => {
+  const result = await DocumentPicker.getDocumentAsync({
+    type: '*/*',
+    multiple: true,
+  });
+  
+  if (!result.canceled && result.assets) {
+    const fileNames = result.assets.map(asset => asset.name);
+    setSelectedFiles(prev => [...prev, ...fileNames]);
+  }
+};
 ```
 
 > Many of these features could be implemented from scratch, but using well-tested libraries improves efficiency and maintainability, applying the principle of **reliable code reuse**.
