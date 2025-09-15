@@ -80,26 +80,6 @@ export default function NotificationsDrawer() {
       <FlatList
         ref={flatListRef}
         data={items}
-        // data={[
-        //   {
-        //     id: "1",
-        //     createdAt: "2020-08-12T07:30:08.28093+02:00",
-        //     userId: "3ffe27e5-fe2c-45ea-8b3c-879b757b0455",
-        //     userName: "Alicia Wolf",
-        //     documentId: "f09acc46-3875-4eff-8831-10ccf3356420",
-        //     documentTitle: "Edmund Fitzgerald Porter",
-        //     read: true,
-        //   },
-        //   {
-        //     id: "2",
-        //     createdAt: "2020-08-12T07:30:08.281305+02:00",
-        //     userId: "fd525a6d-1255-4427-91fa-86af21e805d3",
-        //     userName: "Cindy Weissnat",
-        //     documentId: "8d9b79cc-a48c-4f62-b385-607feb4276b8",
-        //     documentTitle: "Schneider Aventinus",
-        //     read: false,
-        //   },
-        // ]}
         initialNumToRender={5}
         keyExtractor={(n) => n.id}
         ListEmptyComponent={() => (
@@ -107,7 +87,6 @@ export default function NotificationsDrawer() {
             <Text>No notifications yet</Text>
           </View>
         )}
-        showsVerticalScrollIndicator={false}
         onScrollToIndexFailed={(info) => {
           // Handle scroll to index failed
           console.log('Scroll to index failed:', info);

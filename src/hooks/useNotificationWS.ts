@@ -10,12 +10,13 @@ import LocalNotificationService from "@/src/services/LocalNotificationService";
 import ToastService from "@/src/services/ToastService";
 import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
 
-export function useDocumentsWS(url: string) {
+export function useDocumentsWS() {
   const queryClient = useQueryClient();
   const { authToken } = useAuthContext();
   const { openNotifications } = useStackLayout();
 
   useEffect(() => {
+    const url = process.env.EXPO_PUBLIC_WS_URL || "ws://localhost:8080";
     let ws: WebSocket | null = null;
     let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
     let reconnectAttempts = 0;
@@ -29,7 +30,7 @@ export function useDocumentsWS(url: string) {
       }
 
       try {
-        ws = new WebSocket(url);
+        ws = new WebSocket(url + "/notifications");
         console.log(
           `Attempting to connect to WebSocket (attempt ${reconnectAttempts + 1})`
         );
@@ -143,7 +144,7 @@ export function useDocumentsWS(url: string) {
         ws.close(1000, "Component unmounting"); // Intentional close
       }
     };
-  }, [url, queryClient, authToken]);
+  }, [queryClient, authToken]);
 
   // Listener to handle when a notification is pressed
   useEffect(() => {

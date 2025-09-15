@@ -361,17 +361,19 @@ const schema = z.object({ name: z.string().min(1), email: z.string().email() });
 
 ## 5. Project Structure
 ```
-/src
-  /app               # Main navigation (expo-router or screens)
-  /components        # Reusable UI
-  /features/documents
-    api/             # http.ts, ws.ts, queries.ts
-    model/           # types.ts (Document, DTOs)
-    ui/              # Screens and components: List, Grid, Detail, Modal
-  /lib               # queryClient, storage, theme, notifications
-  /stores            # Zustand stores (viewMode, sort, modal)
-  /hooks             # Custom hooks
-  /test              # Unit and UI tests
+/app/                    # Expo Router navigation
+/src/
+  /api/                 # API layer
+  /components/          # Reusable UI components
+  /constant/            # Constants and mock data
+  /context/             # React Context providers
+  /hooks/               # Custom React hooks
+  /models/              # TypeScript types and enums
+  /navigation/          # Navigation configuration
+  /services/            # Business logic and services
+  /stores/              # Zustand state management
+  /test/                # Test files and utilities
+/assets/                # Static assets
 ```
 
 ---

@@ -10,7 +10,7 @@ import { useTheme } from "@/src/hooks/useTheme";
 
 export default function DocumentsScreen() {
   const theme = useTheme();
-  useDocumentsWS("ws://localhost:8080/notifications");
+  useDocumentsWS();
 
   return (
     <SafeAreaView

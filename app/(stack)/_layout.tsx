@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   notificationBadgeText: {
     fontSize: 10,
     color: "white",
-    paddingHorizontal: 2,
+    paddingHorizontal: 3,
+    textAlign: "center",
   },
 });

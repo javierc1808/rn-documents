@@ -1,10 +1,9 @@
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useCallback, useEffect, useRef } from "react";
+import React from "react";
 import { Animated, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
-import { ListByEnum } from "@/src/models/enums";
+import { useAnimatedDocumentItem } from "@/src/hooks/useAnimatedDocumentItem";
 import { Document } from "@/src/models/types";
-import { useListByStore } from "@/src/stores/useListByStore";
 
 interface AnimatedDocumentItemProps {
   data: Document;
@@ -23,83 +22,14 @@ export default function AnimatedDocumentItem({
   onAnimationComplete,
   isInitialLoad = false
 }: AnimatedDocumentItemProps) {
-  const { activeElement } = useListByStore();
+  const { animatedStyle, formatRelativeTime, isGridMode } = useAnimatedDocumentItem({
+    index,
+    isAnimating,
+    onAnimationComplete,
+    isInitialLoad,
+  });
 
-  // Function to format the date
-  const formatDate = useCallback((dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-    } catch {
-      return dateString; // Return original string if there's an error
-    }
-  }, []);
-
-  // Initialize with appropriate values according to context
-  const initialOpacity = isInitialLoad ? 1 : 0;
-  const isGridMode = activeElement === ListByEnum.GRID;
-  const initialScale = isInitialLoad ? 1 : (isGridMode ? 0.9 : 0.8);
-
-  const fadeAnim = useRef(new Animated.Value(initialOpacity)).current;
-  const scaleAnim = useRef(new Animated.Value(initialScale)).current;
-
-  useEffect(() => {
-    if (isAnimating) {
-      // Adjust parameters according to display mode
-      const isGridMode = activeElement === ListByEnum.GRID;
-
-      // Smoother parameters for grid
-      const enterDelay = isGridMode ? index * 60 : index * 80; // Less delay in grid
-      const duration = isGridMode ? 500 : 400; // Longer duration in grid
-      const initialScale = isGridMode ? 0.9 : 0.8; // Smoother initial scale in grid
-
-      // Adjust initial scale if it's grid
-      if (isGridMode) {
-        scaleAnim.setValue(initialScale);
-      }
-
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration,
-          delay: enterDelay,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration,
-          delay: enterDelay,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        if (onAnimationComplete && index === 0) {
-          // Only the first element calls the callback
-          onAnimationComplete();
-        }
-      });
-    } else if (!isInitialLoad) {
-      // Only reset if it's not initial load and not animating
-      const isGridMode = activeElement === ListByEnum.GRID;
-      const initialScale = isGridMode ? 0.9 : 0.8;
-
-      fadeAnim.setValue(0);
-      scaleAnim.setValue(initialScale);
-    }
-  }, [isAnimating, index, fadeAnim, scaleAnim, onAnimationComplete, isInitialLoad, activeElement]);
-
-  const animatedStyle = {
-    opacity: fadeAnim,
-    transform: [{ scale: scaleAnim }],
-  };
-
-  if (activeElement === ListByEnum.GRID) {
+  if (isGridMode) {
     return (
       <Animated.View style={[styles.cardContainer, style, animatedStyle]}>
         <View style={styles.gridTitleContainer}>
@@ -108,7 +38,7 @@ export default function AnimatedDocumentItem({
           <Text style={styles.version}>Version {data.version}</Text>
         </View>
         <View style={styles.gridDateContainer}>
-          <Text style={styles.dateText}>{formatDate(data.createdAt)}</Text>
+          <Text style={styles.dateText}>{formatRelativeTime(data.createdAt)}</Text>
         </View>
       </Animated.View>
     );
@@ -156,7 +86,7 @@ export default function AnimatedDocumentItem({
         </View>
       </View>
       <View style={styles.dateContainer}>
-        <Text style={styles.dateText}>{formatDate(data.createdAt)}</Text>
+        <Text style={styles.dateText}>{formatRelativeTime(data.createdAt)}</Text>
       </View>
     </Animated.View>
   );
