@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const authToken = useMemo(() => {
     if (isAuthenticated) {
-      return btoa(`${user?.name}:${user?.id}`);
+      return btoa(`${user!.name}:${user!.id}`);
     }
     return '';
   }, [isAuthenticated, user]);

@@ -11,9 +11,11 @@ import {
 
 import AnimatedDocumentItem from "@/src/components/AnimatedDocumentItem";
 import { SPACING, useDocumentList } from "@/src/hooks/useDocumentList";
+import { useTheme } from "@/src/hooks/useTheme";
 import { Document } from "@/src/models/types";
 
 export default function DocumentList() {
+  const theme = useTheme();
   const {
     data,
     isRefetching,
@@ -84,9 +86,9 @@ export default function DocumentList() {
   if (error && data.length === 0) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>{error.message}</Text>
+        <Text style={[styles.errorText, { color: theme.colors.text }]}>{error.message}</Text>
 
-        <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
+        <TouchableOpacity style={[styles.retryButton, { backgroundColor: theme.colors.primary }]} onPress={handleRetry}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
       </View>
@@ -106,7 +108,7 @@ export default function DocumentList() {
       }
       ListEmptyComponent={
         <View style={styles.empty}>
-          <Text>No documents found</Text>
+          <Text style={{ color: theme.colors.textSecondary }}>No documents found</Text>
         </View>
       }
     />
@@ -130,11 +132,9 @@ const styles = StyleSheet.create({
   retryButton: {
     marginTop: 20,
     padding: 15,
-    backgroundColor: "#4281F2",
     borderRadius: 10,
   },
   retryButtonText: {
-    color: "white",
     fontWeight: "bold",
     fontSize: 16,
   },

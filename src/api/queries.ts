@@ -1,8 +1,8 @@
+import { useAuthContext } from "@/src/context/AuthContext";
+import { CreateDocumentDTO, Document, User } from "@/src/models/types";
+import { useSortByStore } from "@/src/stores/useSortByStore";
 import { faker } from "@faker-js/faker";
 import { useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
-import { useAuthContext } from "../context/AuthContext";
-import { CreateDocumentDTO, Document, User } from "../models/types";
-import { useSortByStore } from "../stores/useSortByStore";
 
 const getDocuments = async (authToken: string): Promise<Document[]> => {
   const url = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";

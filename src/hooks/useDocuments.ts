@@ -1,10 +1,10 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
+import { useCreateDocumentMutation, useGetDocumentsQuery } from "@/src/api/queries";
 import { SortByEnum } from "@/src/models/enums";
 import { CreateDocumentDTO, Document } from "@/src/models/types";
 import { useSortByStore } from "@/src/stores/useSortByStore";
-import { useCreateDocumentMutation, useGetDocumentsQuery } from "../api/queries";
 
 export const useDocuments = () => {
   const sortBy = useSortByStore((state) => state.activeElement);

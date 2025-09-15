@@ -462,9 +462,9 @@ yarn test
 ## 8. Next Steps
 With more time, I would add:
 - **End-to-end testing** with Maestro.  
-- Improved accessibility (labels, focus management).  
-- Skeleton loaders and transition animations.  
-- Deep linking and real push notifications.  
+- Skeleton loaders.  
+- Real push notifications.  
+- Integrate Sentry for error handling and telemetry.  
 
 ---
 

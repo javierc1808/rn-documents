@@ -2,30 +2,32 @@ import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
+import { useTheme } from "@/src/hooks/useTheme";
 import { ListByEnum } from "@/src/models/enums";
 import { Document } from "@/src/models/types";
 import { useListByStore } from "@/src/stores/useListByStore";
 
 export default function DocumentItem({ data, style }: { data: Document, style?: StyleProp<ViewStyle> }) {
+  const theme = useTheme();
   const { activeElement } = useListByStore();
 
   if (activeElement === ListByEnum.GRID) {
     return (
-      <View style={[styles.cardContainer, style]}>
+      <View style={[styles.cardContainer, { backgroundColor: theme.colors.card }, style]}>
         <View style={styles.gridTitleContainer}>
-          <Text style={styles.title}>{data.title}</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{data.title}</Text>
           <View style={styles.sizeBox} />
-          <Text style={styles.version}>Version {data.version}</Text>
+          <Text style={[styles.version, { color: theme.colors.textSecondary }]}>Version {data.version}</Text>
         </View>
       </View>
     );
   }
 
   return (
-    <View style={[styles.cardContainer, style]}>
+    <View style={[styles.cardContainer, { backgroundColor: theme.colors.card }, style]}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.version} numberOfLines={1} ellipsizeMode="tail">Version {data.version}</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{data.title}</Text>
+        <Text style={[styles.version, { color: theme.colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">Version {data.version}</Text>
       </View>
       <View style={styles.rowContainer}>
         <View style={styles.descriptionContainer}>
@@ -33,17 +35,17 @@ export default function DocumentItem({ data, style }: { data: Document, style?: 
             <MaterialCommunityIcons
               name="account-group-outline"
               size={24}
-              color="gray"
+              color={theme.colors.icon}
             />
             <View style={styles.sizeBox} />
-            <Text style={styles.descriptionTitle}>Contributors</Text>
+            <Text style={[styles.descriptionTitle, { color: theme.colors.text }]}>Contributors</Text>
           </View>
           {data.contributors.map((contributor, index) => (
             <View
               key={`${contributor.id}-${index}`}
               style={styles.separator}
             >
-              <Text style={styles.title2}>
+              <Text style={[styles.title2, { color: theme.colors.textSecondary }]}>
                 {contributor.name}
               </Text>
             </View>
@@ -51,19 +53,19 @@ export default function DocumentItem({ data, style }: { data: Document, style?: 
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionTitleContainer}>
-            <FontAwesome5 name="link" size={16} color="gray" />
+            <FontAwesome5 name="link" size={16} color={theme.colors.icon} />
             <View style={styles.sizeBox} />
-            <Text style={styles.descriptionTitle}>Attachments</Text>
+            <Text style={[styles.descriptionTitle, { color: theme.colors.text }]}>Attachments</Text>
           </View>
           {data.attachments.map((attachment, index) => (
             <View key={`${attachment}-${index}`} style={styles.separator}>
-              <Text style={styles.title2}>{attachment}</Text>
+              <Text style={[styles.title2, { color: theme.colors.textSecondary }]}>{attachment}</Text>
             </View>
           ))}
         </View>
       </View>
       <View>
-        {data.createdAt}
+        <Text style={{ color: theme.colors.textTertiary }}>{data.createdAt}</Text>
       </View>
     </View>
   );
@@ -72,7 +74,6 @@ export default function DocumentItem({ data, style }: { data: Document, style?: 
 const styles = StyleSheet.create({
   cardContainer: {
     flex: 1,
-    backgroundColor: "white",
     padding: 20,
     borderRadius: 5,
   },
@@ -94,7 +95,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     textAlign: "center",
     fontSize: 12,
-    color: "gray",
   },
   descriptionContainer: {
     flex: 1,
@@ -117,7 +117,6 @@ const styles = StyleSheet.create({
   },
   title2: {
     fontSize: 14,
-    color: "gray",
   },
   separator: {
     marginBottom: 8,

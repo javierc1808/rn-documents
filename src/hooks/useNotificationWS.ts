@@ -41,11 +41,9 @@ export function useNotificationWS() {
           try {
             const msg = JSON.parse(ev.data) as NotificationMessage;
 
-            console.log( "msg", msg);
-
             if (
               (msg.type === "document.created" ||
-                msg.type === "document.created.fake") && msg.userId !== user?.id
+                msg.type === "document.created.fake") && msg.userId !== user!.id
             ) {
               const typeNotification =
                 msg.type === "document.created.fake" ? "FAKE" : "REAL";

@@ -4,8 +4,10 @@ import { useCallback, useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { useStackLayout } from "@/src/hooks/useStackLayout";
+import { useTheme } from "@/src/hooks/useTheme";
 
 export default function StackLayout() {
+  const theme = useTheme();
   const { totalItemsUnread, formatTotalItems, openNotifications } = useStackLayout();
 
   const notificationBadgeContainerStyle = useMemo(
@@ -43,7 +45,7 @@ export default function StackLayout() {
               <MaterialIcons
                 name="notifications-none"
                 size={18}
-                color="black"
+                color={theme.colors.text}
               />
             </TouchableOpacity>
           ),

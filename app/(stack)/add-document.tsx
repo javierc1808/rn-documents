@@ -14,8 +14,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAddDocument } from "@/src/hooks/useAddDocument";
+import { useTheme } from "@/src/hooks/useTheme";
 
 export default function AddDocumentModal() {
+  const theme = useTheme();
   const {
     control,
     errors,
@@ -31,89 +33,105 @@ export default function AddDocumentModal() {
   } = useAddDocument();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Add document</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>Add document</Text>
           <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-            <MaterialCommunityIcons name="close" size={24} color="black" />
+            <MaterialCommunityIcons name="close" size={24} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Document Information Section */}
-          <Text style={styles.sectionTitle}>Document informations</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Document informations</Text>
 
           {/* Name Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Name</Text>
+            <Text style={[styles.label, { color: theme.colors.text }]}>Name</Text>
             <Controller
               control={control}
               name="name"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[styles.input, errors.name && styles.inputError]}
+                  style={[
+                    styles.input, 
+                    { 
+                      backgroundColor: theme.colors.card,
+                      color: theme.colors.text,
+                      borderColor: theme.colors.border
+                    },
+                    errors.name && { borderColor: theme.colors.error, borderWidth: 2 }
+                  ]}
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   placeholder="Stone IPA"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.colors.placeholder}
                 />
               )}
             />
             {errors.name && (
-              <Text style={styles.errorText}>{errors.name.message}</Text>
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.name.message}</Text>
             )}
           </View>
 
           {/* Version Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Version</Text>
+            <Text style={[styles.label, { color: theme.colors.text }]}>Version</Text>
             <Controller
               control={control}
               name="version"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[styles.input, errors.version && styles.inputError]}
+                  style={[
+                    styles.input, 
+                    { 
+                      backgroundColor: theme.colors.card,
+                      color: theme.colors.text,
+                      borderColor: theme.colors.border
+                    },
+                    errors.version && { borderColor: theme.colors.error, borderWidth: 2 }
+                  ]}
                   value={value}
                   onChangeText={(text) => handleVersionChange(text, onChange)}
                   onBlur={onBlur}
                   placeholder="1.0.0"
                   keyboardType="numeric"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.colors.placeholder}
                 />
               )}
             />
             {errors.version && (
-              <Text style={styles.errorText}>{errors.version.message}</Text>
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.version.message}</Text>
             )}
           </View>
 
           {/* File Upload Section */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>File</Text>
+            <Text style={[styles.label, { color: theme.colors.text }]}>File</Text>
             <TouchableOpacity
-              style={styles.fileButton}
+              style={[styles.fileButton, { borderColor: theme.colors.primary }]}
               onPress={handleFileSelection}
             >
               <MaterialCommunityIcons
                 name="file-document-outline"
                 size={20}
-                color="#007AFF"
+                color={theme.colors.primary}
               />
-              <Text style={styles.fileButtonText}>Choose file</Text>
+              <Text style={[styles.fileButtonText, { color: theme.colors.primary }]}>Choose file</Text>
             </TouchableOpacity>
 
             {/* Selected Files List */}
             {selectedFiles && selectedFiles.length > 0 && (
               <View style={styles.selectedFilesContainer}>
                 {selectedFiles.map((fileName, index) => (
-                  <View key={index} style={styles.fileItem}>
-                    <Text style={styles.fileName} numberOfLines={1}>
+                  <View key={index} style={[styles.fileItem, { backgroundColor: theme.colors.backgroundTertiary }]}>
+                    <Text style={[styles.fileName, { color: theme.colors.text }]} numberOfLines={1}>
                       {fileName}
                     </Text>
                     <TouchableOpacity
@@ -123,7 +141,7 @@ export default function AddDocumentModal() {
                       <MaterialCommunityIcons
                         name="close"
                         size={16}
-                        color="#FF3B30"
+                        color={theme.colors.error}
                       />
                     </TouchableOpacity>
                   </View>
@@ -131,17 +149,18 @@ export default function AddDocumentModal() {
               </View>
             )}
             {errors.files && (
-              <Text style={styles.errorText}>{errors.files.message}</Text>
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.files.message}</Text>
             )}
           </View>
         </ScrollView>
 
         {/* Submit Button */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { borderTopColor: theme.colors.border }]}>
           <TouchableOpacity
             style={[
               styles.submitButton,
-              (isSubmitting || !isValid) && styles.submitButtonDisabled,
+              { backgroundColor: theme.colors.primary },
+              (isSubmitting || !isValid) && { backgroundColor: theme.colors.primaryDisabled },
             ]}
             onPress={handleSubmit(onSubmit)}
             disabled={isSubmitting || !isValid}
@@ -159,7 +178,6 @@ export default function AddDocumentModal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -175,7 +193,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000000",
   },
   closeButton: {
     padding: 4,
@@ -188,7 +205,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "black",
     marginBottom: 20,
   },
   inputContainer: {
@@ -200,21 +216,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "white",
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: "#000000",
     borderWidth: 1,
-    borderColor: "#E5E5EA",
-  },
-  inputError: {
-    borderColor: "#FF3B30",
-    borderWidth: 2,
   },
   errorText: {
-    color: "#FF3B30",
     fontSize: 14,
     marginTop: 4,
     marginLeft: 4,
@@ -227,10 +235,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignSelf: "flex-start",
     borderWidth: 1,
-    borderColor: "#007AFF",
   },
   fileButtonText: {
-    color: "#007AFF",
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
@@ -242,7 +248,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#F2F2F7",
     borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -251,7 +256,6 @@ const styles = StyleSheet.create({
   fileName: {
     flex: 1,
     fontSize: 14,
-    color: "black",
     marginRight: 8,
   },
   removeFileButton: {
@@ -261,16 +265,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderTopWidth: 1,
-    borderTopColor: "#E5E5EA",
   },
   submitButton: {
-    backgroundColor: "#007AFF",
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: "center",
-  },
-  submitButtonDisabled: {
-    backgroundColor: "#C7C7CC",
   },
   submitButtonText: {
     color: "white",

@@ -6,7 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import NotificationDrawer from "@/src/components/NotificationDrawer";
 import { useAuthContext } from "@/src/context/AuthContext";
-import { useNotificationWS } from "../hooks/useNotificationWS";
+import { useNotificationWS } from "@/src/hooks/useNotificationWS";
 
 const NavigationContainer = () => {
   const { isLoading } = useAuthContext();

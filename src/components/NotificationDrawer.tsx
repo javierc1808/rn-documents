@@ -9,10 +9,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useTheme } from "@/src/hooks/useTheme";
 import { useNotificationsStore } from "@/src/stores/useNotificationsStore";
-import { formatRelativeTime } from "../utils/dateFormat";
+import { formatRelativeTime } from "@/src/utils/dateFormat";
 
 export default function NotificationsDrawer() {
+  const theme = useTheme();
   const totalItemsUnread = useNotificationsStore((state) =>
     state.totalItemsUnread()
   );
@@ -65,21 +67,21 @@ export default function NotificationsDrawer() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.headerContainer}>
-        <Ionicons name="notifications" size={20} />
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <Ionicons name="notifications" size={20} color={theme.colors.text} />
+        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Notifications</Text>
         {totalItemsUnread > 0 && (
-          <Text style={styles.markAllButton}>({totalItemsUnread} unread)</Text>
+          <Text style={[styles.markAllButton, { color: theme.colors.textSecondary }]}>({totalItemsUnread} unread)</Text>
         )}
       </View>
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity onPress={markAllRead} style={styles.markAllButton}>
-          <Text style={styles.markAllText}>Mark all as read</Text>
+          <Text style={[styles.markAllText, { color: theme.colors.primary }]}>Mark all as read</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={clear} style={styles.markAllButton}>
-          <Text style={styles.markAllText}>Clear all</Text>
+          <Text style={[styles.markAllText, { color: theme.colors.primary }]}>Clear all</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -89,7 +91,7 @@ export default function NotificationsDrawer() {
         keyExtractor={(n) => n.id}
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
-            <Text>No notifications yet</Text>
+            <Text style={{ color: theme.colors.textSecondary }}>No notifications yet</Text>
           </View>
         )}
         onScrollToIndexFailed={(info) => {
@@ -106,19 +108,19 @@ export default function NotificationsDrawer() {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => handleMarkRead(item.id)}
-            style={[styles.notificationItem, { opacity: item.read ? 0.5 : 1 }]}
+            style={[styles.notificationItem, { opacity: item.read ? 0.5 : 1, borderBottomColor: theme.colors.border }]}
             accessibilityLabel={`Notification: ${item.documentTitle}`}
           >
-            <Text style={{ fontWeight: item.read ? "400" : "600" }}>
+            <Text style={[{ fontWeight: item.read ? "400" : "600" }, { color: theme.colors.text }]}>
               {item.documentTitle} ({formatType(item.type)})
             </Text>
             {item.userName && (
-              <Text numberOfLines={2} style={styles.notificationBody}>
+              <Text numberOfLines={2} style={[styles.notificationBody, { color: theme.colors.textSecondary }]}>
                 {item.userName}
               </Text>
             )}
             {item.createdAt && (
-              <Text style={styles.notificationTime}>
+              <Text style={[styles.notificationTime, { color: theme.colors.textTertiary }]}>
                 {formatRelativeTime(item.createdAt)}
               </Text>
             )}
@@ -131,7 +133,7 @@ export default function NotificationsDrawer() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    flex: 1,
   },
   headerContainer: {
     flexDirection: "row",
@@ -164,15 +166,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
   },
   notificationBody: {
     marginTop: 2,
-    color: "#555",
   },
   notificationTime: {
     marginTop: 4,
     fontSize: 12,
-    color: "#888",
   },
 });

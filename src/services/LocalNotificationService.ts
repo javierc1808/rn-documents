@@ -5,6 +5,7 @@ class LocalNotificationService {
   private static instance: LocalNotificationService;
   private _canShowNotification = true;
   private _isValid = false;
+  private _isBusy = false;
 
   get canShowNotification() {
     return this._canShowNotification;
@@ -39,8 +40,12 @@ class LocalNotificationService {
       if (permissions.status !== "granted") {
         const requestResult = await Notifications.requestPermissionsAsync();
         if (requestResult.status !== "granted") {
-          this._canShowNotification = false;
+          if (this._isBusy) {
+            return this._isValid = false;
+          }
 
+          this._canShowNotification = false;
+          this._isBusy = true;
           Alert.alert(
             "Notification Permissions Required",
             "To receive notifications you must accept permissions in the app settings",
@@ -49,29 +54,28 @@ class LocalNotificationService {
                 text: "Cancel",
                 style: "cancel",
                 onPress: () => {
+                  this._isBusy = false;
                 },
               },
               {
                 text: "Go to Settings",
                 onPress: () => {
                   Linking.openSettings();
+                  this._isBusy = false;
                 },
               },
             ]
           );
 
-          this._isValid = false;
-          return this._isValid;
+          return this._isValid = false;
         }
       }
 
-      this._isValid = true;
-      return this._isValid;
+      return this._isValid = true;
     } catch (error) {
       console.error("Error validating permissions:", error);
 
-      this._isValid = false;
-      return this._isValid;
+      return this._isValid = false;
     }
   }
 

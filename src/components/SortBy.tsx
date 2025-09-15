@@ -2,6 +2,7 @@ import { Entypo } from '@expo/vector-icons';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useTheme } from '@/src/hooks/useTheme';
 import { useSortByStore } from '@/src/stores/useSortByStore';
 
 // const sortByList = [
@@ -24,19 +25,20 @@ import { useSortByStore } from '@/src/stores/useSortByStore';
 // ];
 
 export default function SortBy() {
+  const theme = useTheme();
   const activeElement = useSortByStore((state) => state.activeElement);
   const handlePress = useSortByStore((state) => state.handlePress);
 
   const formattedActiveElement = useMemo(() => activeElement.charAt(0).toUpperCase() + activeElement.slice(1), [activeElement]);
 
   return (
-    <Pressable style={styles.container} onPress={handlePress}>
-      <View style={[styles.rowContainer, styles.activeElementContainerList]}>
-        <Entypo name="select-arrows" size={18} color="black" />
-        <Text style={styles.textStyle}>Sort by ({formattedActiveElement})</Text>
+    <Pressable style={[styles.container, { borderColor: theme.colors.border }]} onPress={handlePress}>
+      <View style={[styles.rowContainer, styles.activeElementContainerList, { backgroundColor: theme.colors.card, borderEndColor: theme.colors.border }]}>
+        <Entypo name="select-arrows" size={18} color={theme.colors.text} />
+        <Text style={[styles.textStyle, { color: theme.colors.text }]}>Sort by ({formattedActiveElement})</Text>
       </View>
-      <View style={[styles.rowContainer, styles.activeElementContainerGrid]}>
-        <Entypo name="chevron-down" size={18} color="black" />
+      <View style={[styles.rowContainer, styles.activeElementContainerGrid, { backgroundColor: theme.colors.card }]}>
+        <Entypo name="chevron-down" size={18} color={theme.colors.text} />
       </View>
     </Pressable>
   )
@@ -46,7 +48,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "lightgray",
     borderRadius: 8,
   },
   rowContainer: {
@@ -62,14 +63,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   activeElementContainerList: {
-    backgroundColor: "white",
     borderEndWidth: 1,
-    borderEndColor: "lightgray",
     borderTopStartRadius: 8,
     borderBottomStartRadius: 8,
   },
   activeElementContainerGrid: {
-    backgroundColor: "white",
     borderTopEndRadius: 8,
     borderBottomEndRadius: 8,
   },

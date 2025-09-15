@@ -3,8 +3,9 @@ import React, { useMemo } from "react";
 import { Animated, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 import { useAnimatedDocumentItem } from "@/src/hooks/useAnimatedDocumentItem";
+import { useTheme } from "@/src/hooks/useTheme";
 import { Document } from "@/src/models/types";
-import { formatRelativeTime } from "../utils/dateFormat";
+import { formatRelativeTime } from "@/src/utils/dateFormat";
 
 interface AnimatedDocumentItemProps {
   data: Document;
@@ -23,6 +24,7 @@ export default function AnimatedDocumentItem({
   onAnimationComplete,
   isInitialLoad = false
 }: AnimatedDocumentItemProps) {
+  const theme = useTheme();
   const { animatedStyle, isGridMode } = useAnimatedDocumentItem({
     index,
     isAnimating,
@@ -34,24 +36,24 @@ export default function AnimatedDocumentItem({
 
   if (isGridMode) {
     return (
-      <Animated.View style={[styles.cardContainer, style, animatedStyle]}>
+      <Animated.View style={[styles.cardContainer, { backgroundColor: theme.colors.card }, style, animatedStyle]}>
         <View style={styles.gridTitleContainer}>
-          <Text style={styles.title}>{data.title}</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{data.title}</Text>
           <View style={styles.sizeBox} />
-          <Text style={styles.version}>Version {data.version}</Text>
+          <Text style={[styles.version, { color: theme.colors.textSecondary }]}>Version {data.version}</Text>
         </View>
         <View style={styles.gridDateContainer}>
-          <Text style={styles.dateText}>{formatRelativeTimeMemo}</Text>
+          <Text style={[styles.dateText, { color: theme.colors.textTertiary }]}>{formatRelativeTimeMemo}</Text>
         </View>
       </Animated.View>
     );
   }
 
   return (
-    <Animated.View style={[styles.cardContainer, style, animatedStyle]}>
+    <Animated.View style={[styles.cardContainer, { backgroundColor: theme.colors.card }, style, animatedStyle]}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.version} numberOfLines={1} ellipsizeMode="tail">Version {data.version}</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{data.title}</Text>
+        <Text style={[styles.version, { color: theme.colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">Version {data.version}</Text>
       </View>
       <View style={styles.rowContainer}>
         <View style={styles.descriptionContainer}>
@@ -59,17 +61,17 @@ export default function AnimatedDocumentItem({
             <MaterialCommunityIcons
               name="account-group-outline"
               size={24}
-              color="gray"
+              color={theme.colors.icon}
             />
             <View style={styles.sizeBox} />
-            <Text style={styles.descriptionTitle}>Contributors</Text>
+            <Text style={[styles.descriptionTitle, { color: theme.colors.text }]}>Contributors</Text>
           </View>
           {data.contributors.map((contributor, index) => (
             <View
               key={`${contributor.id}-${index}`}
               style={styles.separator}
             >
-              <Text style={styles.title2}>
+              <Text style={[styles.title2, { color: theme.colors.textSecondary }]}>
                 {contributor.name}
               </Text>
             </View>
@@ -77,19 +79,19 @@ export default function AnimatedDocumentItem({
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionTitleContainer}>
-            <FontAwesome5 name="link" size={16} color="gray" />
+            <FontAwesome5 name="link" size={16} color={theme.colors.icon} />
             <View style={styles.sizeBox} />
-            <Text style={styles.descriptionTitle}>Attachments</Text>
+            <Text style={[styles.descriptionTitle, { color: theme.colors.text }]}>Attachments</Text>
           </View>
           {data.attachments.map((attachment, index) => (
             <View key={`${attachment}-${index}`} style={styles.separator}>
-              <Text style={styles.title2}>{attachment}</Text>
+              <Text style={[styles.title2, { color: theme.colors.textSecondary }]}>{attachment}</Text>
             </View>
           ))}
         </View>
       </View>
       <View style={styles.dateContainer}>
-        <Text style={styles.dateText}>{formatRelativeTime(data.createdAt)}</Text>
+        <Text style={[styles.dateText, { color: theme.colors.textTertiary }]}>{formatRelativeTime(data.createdAt)}</Text>
       </View>
     </Animated.View>
   );
@@ -98,7 +100,6 @@ export default function AnimatedDocumentItem({
 const styles = StyleSheet.create({
   cardContainer: {
     flex: 1,
-    backgroundColor: "white",
     padding: 20,
     borderRadius: 5,
   },
@@ -120,7 +121,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     textAlign: "center",
     fontSize: 12,
-    color: "gray",
   },
   descriptionContainer: {
     flex: 1,
@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
   },
   title2: {
     fontSize: 14,
-    color: "gray",
   },
   separator: {
     marginBottom: 8,
@@ -158,7 +157,6 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 12,
-    color: "#666",
     fontWeight: "500",
   },
 });
