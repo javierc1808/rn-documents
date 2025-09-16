@@ -15,8 +15,8 @@ const NavigationContainer = () => {
   // Show loading while authentication is being verified
   if (isLoading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
+      <View style={styles.container} testID="loading-container">
+        <ActivityIndicator size="large" testID="activity-indicator" />
       </View>
     );
   }
@@ -36,14 +36,14 @@ const NavigationContainer = () => {
   );
 };
 
-const drawerOptions : DrawerNavigationOptions = {
+const drawerOptions: DrawerNavigationOptions = {
   headerShown: false,
   drawerPosition: "right",
   drawerType: "front",
   swipeEnabled: false,
   overlayColor: "rgba(0,0,0,0.2)",
   drawerStyle: { width: "70%", maxWidth: 420 },
-}
+};
 
 const styles = StyleSheet.create({
   container: {

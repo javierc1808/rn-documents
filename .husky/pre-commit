@@ -1,7 +1,53 @@
-#yarn test
-
-yarn lint
-yarn typecheck
-
+# Run expo-doctor to verify project configuration
+echo "🔧 Running expo-doctor..."
 npx expo-doctor
 
+# If expo-doctor fails, cancel commit
+if [ $? -ne 0 ]; then
+  echo "❌ Commit cancelled: expo-doctor found issues"
+  exit 1
+fi
+
+# Run typecheck
+echo "🔍 Running typecheck..."
+npm run typecheck
+
+# If typecheck fails, cancel commit
+if [ $? -ne 0 ]; then
+  echo "❌ Commit cancelled: TypeScript found type errors"
+  exit 1
+fi
+
+# Run lint
+echo "🔍 Running lint..."
+npm run lint
+
+# If lint fails, cancel commit
+if [ $? -ne 0 ]; then
+  echo "❌ Commit cancelled: ESLint found errors"
+  echo "💡 Run 'npm run lint:fix' to fix automatically"
+  exit 1
+fi
+
+# Run lint-staged
+echo "🔍 Running lint-staged..."
+npx lint-staged
+
+# If lint-staged fails, cancel commit
+if [ $? -ne 0 ]; then
+  echo "❌ Commit cancelled: Lint-staged failed"
+  exit 1
+fi
+
+# Run tests with coverage and verify minimum 80%
+echo "🧪 Running tests with coverage..."
+npm run test:coverage:threshold
+
+# If tests fail or coverage is less than 80%, cancel commit
+if [ $? -ne 0 ]; then
+  echo "❌ Commit cancelled: Tests failed or coverage is less than 80%"
+  echo "💡 Run 'npm run test:coverage' to see full report"
+  exit 1
+fi
+
+echo "✅ All checks passed. Commit allowed."

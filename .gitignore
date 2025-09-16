@@ -43,3 +43,5 @@ app-example
 expo-env.d.ts
 # @end expo-cli
 .env
+
+coverage/

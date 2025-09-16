@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "⚠️  BYPASS MODE: Skipping pre-commit checks"
+echo "💡 This should only be used in emergency cases"
+echo "✅ Commit allowed without checks"

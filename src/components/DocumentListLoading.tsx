@@ -10,7 +10,7 @@ export const DocumentListLoading: React.FC<DocumentListLoadingProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={size} />
+      <ActivityIndicator size={size} testID="activity-indicator" />
     </View>
   );
 };

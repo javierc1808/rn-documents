@@ -41,18 +41,23 @@ export default function DocumentList() {
 
         return (
           <View
-            style={[styles.documentItemContainer, {
-              width: itemWidth,
-              marginRight: isLastInRow ? 0 : SPACING,
-              minHeight: rowHeight ?? undefined,
-            }]}
+            style={[
+              styles.documentItemContainer,
+              {
+                width: itemWidth,
+                marginRight: isLastInRow ? 0 : SPACING,
+                minHeight: rowHeight ?? undefined,
+              },
+            ]}
             onLayout={onMeasureItem}
           >
-            <AnimatedDocumentItem 
-              data={item} 
+            <AnimatedDocumentItem
+              data={item}
               index={index}
               isAnimating={isAnimating}
-              onAnimationComplete={index === 0 ? handleAnimationComplete : undefined}
+              onAnimationComplete={
+                index === 0 ? handleAnimationComplete : undefined
+              }
               isInitialLoad={isInitialLoad}
             />
           </View>
@@ -60,17 +65,28 @@ export default function DocumentList() {
       }
 
       return (
-        <AnimatedDocumentItem 
-          data={item} 
+        <AnimatedDocumentItem
+          data={item}
           style={styles.documentItemContainer}
           index={index}
           isAnimating={isAnimating}
-          onAnimationComplete={index === 0 ? handleAnimationComplete : undefined}
+          onAnimationComplete={
+            index === 0 ? handleAnimationComplete : undefined
+          }
           isInitialLoad={isInitialLoad}
         />
       );
     },
-    [isGrid, columns, itemWidth, rowHeight, onMeasureItem, isAnimating, handleAnimationComplete, isInitialLoad]
+    [
+      isGrid,
+      columns,
+      itemWidth,
+      rowHeight,
+      onMeasureItem,
+      isAnimating,
+      handleAnimationComplete,
+      isInitialLoad,
+    ],
   );
 
   if (shouldShowLoading) {
@@ -80,6 +96,7 @@ export default function DocumentList() {
   return (
     <>
       <FlashList
+        testID="flash-list"
         key={isGrid ? `grid-${rowHeight}` : "list"}
         showsVerticalScrollIndicator={false}
         data={items}

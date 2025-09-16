@@ -1,35 +1,54 @@
 # React Native Challenge
 
 ## 1. Development Approach
+
 Before writing any code, I defined the **key processes** needed to complete the task effectively:
 
-1. **Define processes** → identify requirements and break them down into clear tasks.  
-2. **Execute tasks** → implement the essential features to deliver a **functional MVP**.  
-3. **Refine** → improve structure, optimize code, polish visuals, and ensure test coverage.  
+1. **Define processes** → identify requirements and break them down into clear tasks.
+2. **Execute tasks** → implement the essential features to deliver a **functional MVP**.
+3. **Refine** → improve structure, optimize code, polish visuals, and ensure test coverage.
 
 This approach avoids falling into the trap of “perfection” and ensures delivering value on time while maintaining technical quality.
 
 ---
 
 ## 2. Principles & Philosophy
-- **Robustness and maintainability** over premature optimization.  
-- **Extensibility:** code is structured to make it easy to add new features.  
-- **Tests as safety nets:** they don’t eliminate all errors but help catch them early and give confidence when changing code.  
-- **Early value delivery:** ship a minimum viable product before spending too much on fine-tuning.  
+
+- **Robustness and maintainability** over premature optimization.
+- **Extensibility:** code is structured to make it easy to add new features.
+- **Tests as safety nets:** they don't eliminate all errors but help catch them early and give confidence when changing code.
+- **Early value delivery:** ship a minimum viable product before spending too much on fine-tuning.
+
+---
+
+## 🔒 Pre-commit Hook
+
+This project includes a **pre-commit hook** that requires:
+
+- ✅ **80% minimum code coverage**
+- ✅ **TypeScript without errors**
+- ✅ **ESLint without errors**
+- ✅ **Expo Doctor without issues**
+- ✅ **All tests passing**
+
+See [PRECOMMIT.md](./PRECOMMIT.md) for more details.
 
 ---
 
 ## 3. Tech Stack
+
 I chose **Expo** as the foundation since it is currently recommended by the React Native team for starting new projects:
 
-- Fast development.  
-- Mature and stable toolset.  
-- Easy deployment to both iOS and Android.  
+- Fast development.
+- Mature and stable toolset.
+- Easy deployment to both iOS and Android.
 
 ---
 
 ## 4. Third-Party Libraries
+
 ### Contents
+
 - [@shopify/flash-list](#shopifyflash-list)
 - [expo-haptics](#expo-haptics)
 - [@faker-js/faker](#faker-jsfaker)
@@ -53,23 +72,26 @@ I chose **Expo** as the foundation since it is currently recommended by the Reac
 **Why**  
 High‑performance virtualized list for React Native. Better FPS, memory usage, and render times than `FlatList`, especially for **large datasets** and complex cells. Smoother scroll and less jank on both platforms.
 
-**Alternatives**  
-- `FlatList` (RN core) — ✅ simple, no extra deps; ❌ worse for long/variable lists.  
-- `RecyclerListView` — ✅ blazing performance; ❌ steeper API/learning curve.  
+**Alternatives**
+
+- `FlatList` (RN core) — ✅ simple, no extra deps; ❌ worse for long/variable lists.
+- `RecyclerListView` — ✅ blazing performance; ❌ steeper API/learning curve.
 - `MasonryFlashList` — ✅ masonry‑style grids; ❌ niche use‑case.
 
-**When to switch**  
-- Small/static lists → `FlatList` is enough and reduces deps.  
+**When to switch**
+
+- Small/static lists → `FlatList` is enough and reduces deps.
 - Need extreme control for very variable cells → `RecyclerListView`.
 
 **Snippet**
+
 ```tsx
-import { FlashList } from '@shopify/flash-list';
+import { FlashList } from "@shopify/flash-list";
 <FlashList
   data={documents}
   renderItem={({ item }) => <DocCard doc={item} />}
   estimatedItemSize={90}
-/>
+/>;
 ```
 
 ---
@@ -79,16 +101,19 @@ import { FlashList } from '@shopify/flash-list';
 **Why**  
 Native haptics with **Expo** (works in Expo Go). Improves UX by adding tactile feedback for key actions (pull‑to‑refresh, create document, etc.).
 
-**Alternatives**  
-- `react-native-haptic-feedback` — ✅ popular; ❌ requires prebuild/eject in Expo.  
+**Alternatives**
+
+- `react-native-haptic-feedback` — ✅ popular; ❌ requires prebuild/eject in Expo.
 - Platform‑native APIs — ❌ more maintenance.
 
-**When to switch**  
+**When to switch**
+
 - Bare/Prebuild app without Expo Go → `react-native-haptic-feedback` can be more granular on some devices.
 
 **Snippet**
+
 ```ts
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 ```
 
@@ -99,17 +124,20 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 **Why**  
 Create **mock data** (names, dates, urls) for demos, tests, and empty states without relying on the backend.
 
-**Alternatives**  
-- `chance`, `casual` — ✅ lightweight; ❌ less active ecosystems.  
+**Alternatives**
+
+- `chance`, `casual` — ✅ lightweight; ❌ less active ecosystems.
 - Static JSON fixtures — ✅ zero deps; ❌ less realistic/varied.
 
-**When to switch**  
-- Concerned about **bundle size** → use targeted imports (e.g., `@faker-js/faker/locale/en`) or static fixtures.  
+**When to switch**
+
+- Concerned about **bundle size** → use targeted imports (e.g., `@faker-js/faker/locale/en`) or static fixtures.
 - In tight unit tests → hand‑rolled minimal mocks for maximum control.
 
 **Snippet**
+
 ```ts
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 const doc = { id: faker.string.uuid(), name: faker.commerce.productName() };
 ```
 
@@ -120,18 +148,21 @@ const doc = { id: faker.string.uuid(), name: faker.commerce.productName() };
 **Why**  
 **Icon** pack integrated with Expo (Ionicons, Material, etc.). Works out of the box with Expo Go; no extra native config.
 
-**Alternatives**  
-- `react-native-vector-icons` — base lib Expo wraps; use directly in Bare.  
-- `lucide-react-native`, `phosphor-react-native` — modern icon sets.  
+**Alternatives**
+
+- `react-native-vector-icons` — base lib Expo wraps; use directly in Bare.
+- `lucide-react-native`, `phosphor-react-native` — modern icon sets.
 - `react-native-svg` + custom icons — maximum control, more work.
 
-**When to switch**  
+**When to switch**
+
 - Highly customized brand design → custom SVGs or Lucide/Phosphor.
 
 **Snippet**
+
 ```tsx
-import { Ionicons } from '@expo/vector-icons';
-<Ionicons name="document-text-outline" size={20} />
+import { Ionicons } from "@expo/vector-icons";
+<Ionicons name="document-text-outline" size={20} />;
 ```
 
 ---
@@ -141,18 +172,24 @@ import { Ionicons } from '@expo/vector-icons';
 **Why**  
 **Server‑state** management: caching, retries, invalidations, background refresh, pull‑to‑refresh. Simplifies fetching/sync and reduces boilerplate.
 
-**Alternatives**  
-- **SWR** — simple HTTP‑cache inspired API.  
-- **RTK Query** — integrated with Redux Toolkit.  
+**Alternatives**
+
+- **SWR** — simple HTTP‑cache inspired API.
+- **RTK Query** — integrated with Redux Toolkit.
 - **Fetch + Context** — minimalistic but you’ll re‑implement cache/retry/error handling.
 
-**When to switch**  
-- Heavy Redux usage → RTK Query.  
+**When to switch**
+
+- Heavy Redux usage → RTK Query.
 - Very small app → SWR or direct fetch.
 
 **Snippet**
+
 ```ts
-const { data, refetch, isLoading } = useQuery({ queryKey: ['docs'], queryFn: fetchDocs });
+const { data, refetch, isLoading } = useQuery({
+  queryKey: ["docs"],
+  queryFn: fetchDocs,
+});
 ```
 
 ---
@@ -162,20 +199,27 @@ const { data, refetch, isLoading } = useQuery({ queryKey: ['docs'], queryFn: fet
 **Why**  
 **Lightweight** global state for UI (view mode, filters, modals). Keeps non‑server state out of React Query.
 
-**Alternatives**  
-- **Jotai** — atomic state, ergonomic.  
-- **Redux Toolkit** — enterprise‑standard, more ceremony.  
+**Alternatives**
+
+- **Jotai** — atomic state, ergonomic.
+- **Redux Toolkit** — enterprise‑standard, more ceremony.
 - **Recoil** — atomic model, smaller adoption.
 
-**When to switch**  
-- Need time‑travel/debugger/strict structure → Redux Toolkit.  
+**When to switch**
+
+- Need time‑travel/debugger/strict structure → Redux Toolkit.
 - Prefer atom composition → Jotai.
 
 **Snippet**
+
 ```ts
-import { create } from 'zustand';
-export const useUI = create<{ view:'list'|'grid'; setView:(v:any)=>void }>((set)=> ({
-  view: 'list', setView: (v)=> set({ view: v })
+import { create } from "zustand";
+export const useUI = create<{
+  view: "list" | "grid";
+  setView: (v: any) => void;
+}>((set) => ({
+  view: "list",
+  setView: (v) => set({ view: v }),
 }));
 ```
 
@@ -186,18 +230,21 @@ export const useUI = create<{ view:'list'|'grid'; setView:(v:any)=>void }>((set)
 **Why**  
 **Tree‑shakeable** date utilities. Supports **relative time** (“1 day ago”) and locales.
 
-**Alternatives**  
-- **Day.js** — Moment‑like API, small.  
-- **Luxon** — powerful `Intl`/time‑zones support.  
+**Alternatives**
+
+- **Day.js** — Moment‑like API, small.
+- **Luxon** — powerful `Intl`/time‑zones support.
 - **Intl.RelativeTimeFormat** — native relative formatting, limited helpers.
 
-**When to switch**  
-- Heavy timezone needs → Luxon.  
+**When to switch**
+
+- Heavy timezone needs → Luxon.
 - Very small app → `Intl.RelativeTimeFormat` + a tiny util.
 
 **Snippet**
+
 ```ts
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from "date-fns";
 formatDistanceToNow(new Date(doc.createdAt), { addSuffix: true });
 ```
 
@@ -210,13 +257,15 @@ Simple persistence **compatible with Expo Go**. Used for preferences and/or basi
 
 > **Why not MMKV?** It’s **faster** and more memory‑efficient, but **requires prebuild/eject** and **doesn’t work in Expo Go**. Using MMKV slows iteration (native build times) and hurts the Expo Managed DX
 
-**Alternatives**  
-- **MMKV** — 🔥 performance; ❌ prebuild, no Expo Go.  
+**Alternatives**
+
+- **MMKV** — 🔥 performance; ❌ prebuild, no Expo Go.
 - **react-native-encrypted-storage** — encryption for sensitive data (Bare/Prebuild).
 
 **Snippet**
+
 ```ts
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // Use with persistQueryClient if desired
 ```
 
@@ -227,18 +276,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 **Why**  
 **Local** notifications and push with Expo support. For this challenge: surface realtime events (e.g., new document via WS). Works with Expo Go for locals (with setup).
 
-**Alternatives**  
-- **Notifee** — powerful UI; ❌ native setup.  
+**Alternatives**
+
+- **Notifee** — powerful UI; ❌ native setup.
 - **OneSignal** — SaaS push; ❌ heavier SDK/external setup.
 
-**When to switch**  
-- Advanced channels/actions → Notifee.  
+**When to switch**
+
+- Advanced channels/actions → Notifee.
 - Large‑scale push + dashboard → OneSignal.
 
 **Snippet**
+
 ```ts
-import * as Notifications from 'expo-notifications';
-await Notifications.scheduleNotificationAsync({ content: { title: 'New doc' }, trigger: null });
+import * as Notifications from "expo-notifications";
+await Notifications.scheduleNotificationAsync({
+  content: { title: "New doc" },
+  trigger: null,
+});
 ```
 
 ---
@@ -248,16 +303,19 @@ await Notifications.scheduleNotificationAsync({ content: { title: 'New doc' }, t
 **Why**  
 **Unit and UI** tests close to user interactions. `Jest` as runner/mocks; RTL for queries by text/roles.
 
-**Alternatives**  
-- **Detox** — device/emulator E2E.  
-- **Vitest** — fast; requires extra setup for RN.  
+**Alternatives**
+
+- **Detox** — device/emulator E2E.
+- **Vitest** — fast; requires extra setup for RN.
 - **React Test Renderer** — very low level, less realistic.
 
-**When to switch**  
-- Critical E2E flows → Detox.  
+**When to switch**
+
+- Critical E2E flows → Detox.
 - Monorepo web+rn, speed focus → consider Vitest with proper setup.
 
 **Snippet**
+
 ```ts
 import { render, screen } from '@testing-library/react-native';
 test('renders list', () => {
@@ -273,19 +331,22 @@ test('renders list', () => {
 **Why**  
 **Toast notifications** for React Native with **Expo Go** support. Provides user feedback for actions (success, error, info) with customizable styling and positioning.
 
-**Alternatives**  
-- **react-native-simple-toast** — ✅ lightweight; ❌ limited customization.  
-- **react-native-toast-notifications** — ✅ more features; ❌ heavier bundle.  
+**Alternatives**
+
+- **react-native-simple-toast** — ✅ lightweight; ❌ limited customization.
+- **react-native-toast-notifications** — ✅ more features; ❌ heavier bundle.
 - **Custom modal/toast** — ✅ full control; ❌ more development time.
 
-**When to switch**  
-- Need advanced animations → custom implementation.  
+**When to switch**
+
+- Need advanced animations → custom implementation.
 - Very simple use case → `react-native-simple-toast`.
 
 **Snippet**
+
 ```tsx
-import Toast from 'react-native-toast-message';
-<Toast />
+import Toast from "react-native-toast-message";
+<Toast />;
 // Usage: Toast.show({ type: 'success', text1: 'Document saved!' });
 ```
 
@@ -296,19 +357,26 @@ import Toast from 'react-native-toast-message';
 **Why**  
 **Performant** form library with minimal re-renders. Built-in validation, error handling, and TypeScript support. Reduces boilerplate compared to controlled components.
 
-**Alternatives**  
-- **Formik** — ✅ popular, mature; ❌ more re-renders, larger bundle.  
-- **React Hook Form** — ✅ performance; ❌ steeper learning curve.  
+**Alternatives**
+
+- **Formik** — ✅ popular, mature; ❌ more re-renders, larger bundle.
+- **React Hook Form** — ✅ performance; ❌ steeper learning curve.
 - **Controlled components** — ✅ simple; ❌ lots of boilerplate for complex forms.
 
-**When to switch**  
-- Very simple forms → controlled components.  
+**When to switch**
+
+- Very simple forms → controlled components.
 - Heavy form validation needs → consider Formik with Yup.
 
 **Snippet**
+
 ```tsx
-import { useForm } from 'react-hook-form';
-const { control, handleSubmit, formState: { errors } } = useForm();
+import { useForm } from "react-hook-form";
+const {
+  control,
+  handleSubmit,
+  formState: { errors },
+} = useForm();
 ```
 
 ---
@@ -318,18 +386,21 @@ const { control, handleSubmit, formState: { errors } } = useForm();
 **Why**  
 **Validation resolvers** for react-hook-form. Integrates with popular validation libraries (Zod, Yup, Joi) for type-safe form validation.
 
-**Alternatives**  
-- **Built-in validation** — ✅ simple; ❌ limited features.  
-- **Custom validation** — ✅ full control; ❌ more development time.  
+**Alternatives**
+
+- **Built-in validation** — ✅ simple; ❌ limited features.
+- **Custom validation** — ✅ full control; ❌ more development time.
 - **Yup resolver** — ✅ mature; ❌ larger bundle than Zod.
 
-**When to switch**  
-- Simple validation needs → built-in validation.  
+**When to switch**
+
+- Simple validation needs → built-in validation.
 - Complex validation rules → consider Yup for more features.
 
 **Snippet**
+
 ```tsx
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from "@hookform/resolvers/zod";
 const form = useForm({ resolver: zodResolver(schema) });
 ```
 
@@ -340,19 +411,22 @@ const form = useForm({ resolver: zodResolver(schema) });
 **Why**  
 **TypeScript-first** schema validation. Compile-time type inference, runtime validation, and excellent developer experience. Lightweight and tree-shakeable.
 
-**Alternatives**  
-- **Yup** — ✅ mature, feature-rich; ❌ larger bundle, less TypeScript integration.  
-- **Joi** — ✅ powerful validation; ❌ Node.js focused, larger bundle.  
+**Alternatives**
+
+- **Yup** — ✅ mature, feature-rich; ❌ larger bundle, less TypeScript integration.
+- **Joi** — ✅ powerful validation; ❌ Node.js focused, larger bundle.
 - **io-ts** — ✅ functional approach; ❌ steeper learning curve.
 
-**When to switch**  
-- Need advanced validation features → Yup.  
-- Functional programming preference → io-ts.  
+**When to switch**
+
+- Need advanced validation features → Yup.
+- Functional programming preference → io-ts.
 - Very simple validation → built-in validation.
 
 **Snippet**
+
 ```ts
-import { z } from 'zod';
+import { z } from "zod";
 const schema = z.object({ name: z.string().min(1), email: z.string().email() });
 ```
 
@@ -363,29 +437,32 @@ const schema = z.object({ name: z.string().min(1), email: z.string().email() });
 **Why**  
 **Native file selection** for React Native with **Expo Go** support. Allows users to pick documents from their device storage with a native file picker interface. Essential for the "Add Document" feature where users need to attach files to new documents.
 
-**Alternatives**  
-- **react-native-document-picker** — ✅ more features; ❌ requires custom native code, not compatible with Expo Go.  
-- **expo-image-picker** — ✅ good for images; ❌ limited to images only.  
+**Alternatives**
+
+- **react-native-document-picker** — ✅ more features; ❌ requires custom native code, not compatible with Expo Go.
+- **expo-image-picker** — ✅ good for images; ❌ limited to images only.
 - **react-native-fs** — ✅ file system access; ❌ more complex, requires native setup.
 
-**When to switch**  
-- Need advanced file operations → react-native-document-picker.  
-- Only handling images → expo-image-picker.  
+**When to switch**
+
+- Need advanced file operations → react-native-document-picker.
+- Only handling images → expo-image-picker.
 - Custom file system access → react-native-fs.
 
 **Snippet**
+
 ```tsx
-import * as DocumentPicker from 'expo-document-picker';
+import * as DocumentPicker from "expo-document-picker";
 
 const handleFileSelection = async () => {
   const result = await DocumentPicker.getDocumentAsync({
-    type: '*/*',
+    type: "*/*",
     multiple: true,
   });
-  
+
   if (!result.canceled && result.assets) {
-    const fileNames = result.assets.map(asset => asset.name);
-    setSelectedFiles(prev => [...prev, ...fileNames]);
+    const fileNames = result.assets.map((asset) => asset.name);
+    setSelectedFiles((prev) => [...prev, ...fileNames]);
   }
 };
 ```
@@ -395,6 +472,7 @@ const handleFileSelection = async () => {
 ---
 
 ## 5. Project Structure
+
 ```
 /app/                    # Expo Router navigation
 /src/
@@ -414,11 +492,14 @@ const handleFileSelection = async () => {
 ---
 
 ## 6. Installation & Usage
+
 ### Requirements
-- Node.js >= 20  
-- Yarn or npm  
+
+- Node.js >= 20
+- Yarn or npm
 
 ### Environment variables
+
 Create a `.env` file at the root of the project with:
 
 ```env
@@ -427,6 +508,7 @@ EXPO_PUBLIC_WS_URL=wss://ws-test-server.com
 ```
 
 ### Main scripts
+
 ```bash
 # Install dependencies
 yarn install
@@ -451,23 +533,28 @@ yarn test
 ---
 
 ## 7. Best Practices Applied
-- Strict TypeScript mode.  
-- ESLint + Prettier + Husky + lint-staged.  
-- Clear separation between **infrastructure** (HTTP, WS) and **domain** (types, business logic).  
-- Small, frequent Git commits.  
-- CI (GitHub Actions) running lint, typecheck, and tests on every PR.  
+
+- Strict TypeScript mode.
+- ESLint + Prettier + Husky + lint-staged.
+- Clear separation between **infrastructure** (HTTP, WS) and **domain** (types, business logic).
+- Small, frequent Git commits.
+- CI (GitHub Actions) running lint, typecheck, and tests on every PR.
 
 ---
 
 ## 8. Next Steps
+
 With more time, I would add:
-- **End-to-end testing** with Maestro.  
-- Skeleton loaders.  
-- Real push notifications.  
-- Integrate Sentry for error handling and telemetry.  
+
+- **End-to-end testing** with Maestro.
+- Skeleton loaders.
+- Real push notifications.
+- Integrate Sentry for error handling and telemetry.
 
 ---
 
 ## 9. Author
-👨‍💻 Javier Carroz  
-- [LinkedIn](https://www.linkedin.com/in/javier-carroz-5b75b1ab)  
+
+👨‍💻 Javier Carroz
+
+- [LinkedIn](https://www.linkedin.com/in/javier-carroz-5b75b1ab)

@@ -2,13 +2,19 @@ import { useAuthContext } from "@/src/context/AuthContext";
 import { CreateDocumentDTO, Document, User } from "@/src/models/types";
 import { useSortByStore } from "@/src/stores/useSortByStore";
 import { faker } from "@faker-js/faker";
-import { useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import { fetchWithTimeout } from "./fetchWithTimeout";
 
-const getDocuments = async (authToken: string): Promise<Document[]> => {
+export const getDocuments = async (authToken: string): Promise<Document[]> => {
   const url = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";
 
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const res = await fetchWithTimeout(url + "/documents", 8000, {
     headers: {
@@ -18,7 +24,6 @@ const getDocuments = async (authToken: string): Promise<Document[]> => {
   });
 
   if (!res.ok) {
-
     if (res.status >= 500) {
       throw new Error("Error to contact the server.");
     }
@@ -29,25 +34,24 @@ const getDocuments = async (authToken: string): Promise<Document[]> => {
   return res.json();
 };
 
-const createDocument = async (
+export const createDocument = async (
   user: User,
   authToken: string,
-  document: CreateDocumentDTO
+  document: CreateDocumentDTO,
 ): Promise<Document> => {
-
-  const documentToCreate : Omit<Document, "updatedAt"> = {
+  const documentToCreate: Omit<Document, "updatedAt"> = {
     id: faker.string.uuid(),
     createdAt: new Date().toISOString(),
     contributors: [
-    {
-      id: user.id,
-      name: user.name,
-    },
-    {
-      id: faker.string.uuid(),
-      name: faker.person.fullName(),
-    },
-  ],
+      {
+        id: user.id,
+        name: user.name,
+      },
+      {
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+      },
+    ],
     attachments: document.files,
     title: document.name,
     version: document.version,
@@ -65,7 +69,6 @@ const createDocument = async (
   });
 
   if (!res.ok) {
-
     if (res.status >= 500) {
       throw new Error("Error to contact the server.");
     }
@@ -76,7 +79,7 @@ const createDocument = async (
   return res.json();
 };
 
-export const useGetDocumentsQuery = () : UseQueryResult<Document[], Error> => {
+export const useGetDocumentsQuery = (): UseQueryResult<Document[], Error> => {
   const sortBy = useSortByStore((state) => state.activeElement);
   const { authToken } = useAuthContext();
 
@@ -91,7 +94,11 @@ export const useGetDocumentsQuery = () : UseQueryResult<Document[], Error> => {
   });
 };
 
-export const useCreateDocumentMutation = () : UseMutationResult<Document, Error, CreateDocumentDTO> => {
+export const useCreateDocumentMutation = (): UseMutationResult<
+  Document,
+  Error,
+  CreateDocumentDTO
+> => {
   const { user, authToken } = useAuthContext();
   const queryClient = useQueryClient();
 

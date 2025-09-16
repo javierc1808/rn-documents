@@ -20,7 +20,7 @@ interface NotificationsState {
   scrollToNotificationId: string | null;
   totalItemsUnread: () => number;
   add: (
-    n: Omit<Notification, "id" | "read"> & { id?: string; read?: boolean }
+    n: Omit<Notification, "id" | "read"> & { id?: string; read?: boolean },
   ) => void;
   markRead: (id: string) => void;
   markAllRead: () => void;
@@ -28,47 +28,54 @@ interface NotificationsState {
   setScrollToNotification: (id: string | null) => void;
 }
 
-export const useNotificationsStore = create<NotificationsState>()(persist((set, get) => ({
-  items: [],
-  scrollToNotificationId: null,
-  totalItemsUnread: () => {
-    return get().items.filter((it) => !it.read).length
-  },
-  add: (n) => {
-    if (get().items.find((it) => it.documentId === n.documentId)) {
-      return get().items;
-    }
+export const useNotificationsStore = create<NotificationsState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      scrollToNotificationId: null,
+      totalItemsUnread: () => {
+        return get().items.filter((it) => !it.read).length;
+      },
+      add: (n) => {
+        if (get().items.find((it) => it.documentId === n.documentId)) {
+          return get().items;
+        }
 
-    if (get().items.length >= 150) {
-      set((s) => ({
-        items: [
-          { id: n.id || faker.string.uuid(), read: n.read || false, ...n },
-          ...s.items.slice(0, 150),
-        ],
-      }));
-      return;
-    }
+        if (get().items.length >= 150) {
+          set((s) => ({
+            items: [
+              { id: n.id || faker.string.uuid(), read: n.read || false, ...n },
+              ...s.items.slice(0, 149),
+            ],
+          }));
+          return;
+        }
 
-    set((s) => ({
-      items: [
-        { id: n.id || faker.string.uuid(), read: n.read || false, ...n },
-        ...s.items,
-      ],
-    }));
-  },
-  markRead: (id) =>
-    set((s) => ({
-      items: s.items.map((it) => (it.id === id ? { ...it, read: true } : it)),
-    })),
-  markAllRead: () =>
-    set((s) => ({ items: s.items.map((it) => ({ ...it, read: true })) })),
-  clear: () => set({ items: [] }),
-  setScrollToNotification: (id) => set({ scrollToNotificationId: id }),
-}), {
-  name: "notifications-store-v1",
-  storage: createJSONStorage(Storage),
-  partialize: (state) => ({
-    items: state.items,
-  }),
-  version: 1,
-}));
+        set((s) => ({
+          items: [
+            { id: n.id || faker.string.uuid(), read: n.read || false, ...n },
+            ...s.items,
+          ],
+        }));
+      },
+      markRead: (id) =>
+        set((s) => ({
+          items: s.items.map((it) =>
+            it.id === id ? { ...it, read: true } : it,
+          ),
+        })),
+      markAllRead: () =>
+        set((s) => ({ items: s.items.map((it) => ({ ...it, read: true })) })),
+      clear: () => set({ items: [] }),
+      setScrollToNotification: (id) => set({ scrollToNotificationId: id }),
+    }),
+    {
+      name: "notifications-store-v1",
+      storage: createJSONStorage(Storage),
+      partialize: (state) => ({
+        items: state.items,
+      }),
+      version: 1,
+    },
+  ),
+);
