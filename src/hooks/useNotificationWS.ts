@@ -43,7 +43,7 @@ export function useNotificationWS() {
 
             if (
               (msg.type === "document.created" ||
-                msg.type === "document.created.fake") && msg.userId !== user!.id
+                msg.type === "document.created.fake") && msg.userId !== user?.id
             ) {
               const typeNotification =
                 msg.type === "document.created.fake" ? "FAKE" : "REAL";

@@ -1,8 +1,7 @@
-import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LayoutChangeEvent, useWindowDimensions } from "react-native";
 
-import { useDocuments } from "@/src/hooks/useDocuments";
+import { useDocumentsStore } from "@/src/stores/useDocumentsStore";
 import { useListByStore } from "@/src/stores/useListByStore";
 import { useSortByStore } from "@/src/stores/useSortByStore";
 
@@ -11,8 +10,8 @@ export const SPACING = 25;
 export const INSET = 16;
 
 export const useDocumentList = () => {
-  const { data, isRefetching, refetch, isLoading, error } = useDocuments();
   const { width } = useWindowDimensions();
+  const items = useDocumentsStore((s) => s.items);
 
   const isGrid = useListByStore((state) => state.isGrid());
   const isListAnimating = useListByStore((state) => state.isAnimating);
@@ -40,7 +39,7 @@ export const useDocumentList = () => {
   // reset when columns or dataset change
   useEffect(() => {
     setRowHeight(null);
-  }, [columns, data?.length]);
+  }, [columns, items?.length]);
 
   // Detect SortBy changes and activate animation
   useEffect(() => {
@@ -50,11 +49,6 @@ export const useDocumentList = () => {
       setRowHeight(null);
     }
   }, [isSortAnimating]);
-
-  const handleRetry = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    refetch();
-  }, [refetch]);
 
   const onMeasureItem = useCallback((e: LayoutChangeEvent): void => {
     const h = e.nativeEvent.layout.height;
@@ -79,15 +73,9 @@ export const useDocumentList = () => {
   }, [setIsListAnimating, setIsSortAnimating]);
 
   return {
-    data,
-    isRefetching,
-    refetch,
-    isLoading,
-    error,
     itemWidth,
     rowHeight,
     onMeasureItem,
-    handleRetry,
     columns,
     isGrid,
     contentContainerStyle,

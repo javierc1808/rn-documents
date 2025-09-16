@@ -1,5 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { Storage } from "@/src/services/storage";
 
 interface Notification {
   id: string;
@@ -25,7 +28,7 @@ interface NotificationsState {
   setScrollToNotification: (id: string | null) => void;
 }
 
-export const useNotificationsStore = create<NotificationsState>((set, get) => ({
+export const useNotificationsStore = create<NotificationsState>()(persist((set, get) => ({
   items: [],
   scrollToNotificationId: null,
   totalItemsUnread: () => {
@@ -34,6 +37,16 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
   add: (n) => {
     if (get().items.find((it) => it.documentId === n.documentId)) {
       return get().items;
+    }
+
+    if (get().items.length >= 150) {
+      set((s) => ({
+        items: [
+          { id: n.id || faker.string.uuid(), read: n.read || false, ...n },
+          ...s.items.slice(0, 150),
+        ],
+      }));
+      return;
     }
 
     set((s) => ({
@@ -51,4 +64,11 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
     set((s) => ({ items: s.items.map((it) => ({ ...it, read: true })) })),
   clear: () => set({ items: [] }),
   setScrollToNotification: (id) => set({ scrollToNotificationId: id }),
+}), {
+  name: "notifications-store-v1",
+  storage: createJSONStorage(Storage),
+  partialize: (state) => ({
+    items: state.items,
+  }),
+  version: 1,
 }));

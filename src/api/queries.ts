@@ -3,11 +3,14 @@ import { CreateDocumentDTO, Document, User } from "@/src/models/types";
 import { useSortByStore } from "@/src/stores/useSortByStore";
 import { faker } from "@faker-js/faker";
 import { useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
+import { fetchWithTimeout } from "./fetchWithTimeout";
 
 const getDocuments = async (authToken: string): Promise<Document[]> => {
   const url = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";
 
-  const res = await fetch(url + "/documents", {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  const res = await fetchWithTimeout(url + "/documents", 8000, {
     headers: {
       Accept: "application/json",
       Authorization: `Basic ${authToken}`,
@@ -15,6 +18,11 @@ const getDocuments = async (authToken: string): Promise<Document[]> => {
   });
 
   if (!res.ok) {
+
+    if (res.status >= 500) {
+      throw new Error("Error to contact the server.");
+    }
+
     throw new Error(await res.text());
   }
 
@@ -57,6 +65,11 @@ const createDocument = async (
   });
 
   if (!res.ok) {
+
+    if (res.status >= 500) {
+      throw new Error("Error to contact the server.");
+    }
+
     throw new Error(await res.text());
   }
 
@@ -70,9 +83,11 @@ export const useGetDocumentsQuery = () : UseQueryResult<Document[], Error> => {
   return useQuery({
     queryKey: ["documents", sortBy],
     queryFn: () => getDocuments(authToken),
-    refetchInterval: 30_000,
+    refetchInterval: 30000,
     refetchIntervalInBackground: true,
-    staleTime: 30_000,
+    staleTime: 15_000,
+    gcTime: 5 * 60 * 1000,
+    retry: 2,
   });
 };
 
