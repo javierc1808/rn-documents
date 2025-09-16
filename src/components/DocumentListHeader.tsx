@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../hooks/useTheme";
 
 interface DocumentListHeaderProps {
   networkStatus: "idle" | "ok" | "error";
@@ -12,20 +13,20 @@ export const DocumentListHeader: React.FC<DocumentListHeaderProps> = ({
   errorMessage,
   lastSyncAt,
 }) => {
+  const theme = useTheme();
+
   return (
     <View style={styles.container}>
       {networkStatus === "error" ? (
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            {errorMessage}
-          </Text>
+          <Text style={styles.errorText}>{errorMessage}</Text>
           <View style={styles.retryHint}>
             <Text style={styles.retryText}>Pull to try again</Text>
           </View>
         </View>
       ) : (
         <View style={styles.syncContainer}>
-          <Text style={styles.syncText}>
+          <Text style={[styles.syncText, { color: theme.colors.text }]}>
             Last sync:{" "}
             {lastSyncAt ? new Date(lastSyncAt).toLocaleTimeString() : "—"}
           </Text>
