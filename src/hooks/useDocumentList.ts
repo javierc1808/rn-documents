@@ -19,6 +19,7 @@ export const useDocumentList = () => {
   
   const isSortAnimating = useSortByStore((state) => state.isAnimating);
   const setIsSortAnimating = useSortByStore((state) => state.setIsAnimating);
+  // const { isAnimating: isSortAnimating, setIsAnimating: setIsSortAnimating } = useGlobalSortBy();
   
   // Combine both animation states
   const isAnimating = isListAnimating || isSortAnimating;

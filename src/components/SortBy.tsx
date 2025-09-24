@@ -26,6 +26,7 @@ import { useSortByStore } from '@/src/stores/useSortByStore';
 
 export default function SortBy() {
   const theme = useTheme();
+  // const { sortBy: activeElement, handlePress } = useGlobalSortBy();
   const activeElement = useSortByStore((state) => state.activeElement);
   const handlePress = useSortByStore((state) => state.handlePress);
 

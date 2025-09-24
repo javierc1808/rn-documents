@@ -8,6 +8,7 @@ import { useSortByStore } from "@/src/stores/useSortByStore";
 
 export const useDocuments = () => {
   const sortBy = useSortByStore((state) => state.activeElement);
+  // const { sortBy } = useGlobalSortBy();
   const query = useGetDocumentsQuery();
 
   const sortedData = useMemo(() => {
@@ -39,6 +40,7 @@ export const useDocuments = () => {
 
 export const useCreateDocument = () => {
   const sortBy = useSortByStore((state) => state.activeElement);
+  // const { sortBy } = useGlobalSortBy();
   const queryClient = useQueryClient();
 
   const mutation = useCreateDocumentMutation();
