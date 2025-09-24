@@ -9,7 +9,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -25,7 +25,6 @@ export default function AddDocumentModal() {
     isValid,
     selectedFiles,
     handleSubmit,
-    onSubmit,
     handleClose,
     handleFileSelection,
     removeFile,
@@ -34,39 +33,54 @@ export default function AddDocumentModal() {
   } = useAddDocument();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>Add document</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            Add document
+          </Text>
           <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-            <MaterialCommunityIcons name="close" size={24} color={theme.colors.text} />
+            <MaterialCommunityIcons
+              name="close"
+              size={24}
+              color={theme.colors.text}
+            />
           </TouchableOpacity>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Document Information Section */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Document informations</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            Document informations
+          </Text>
 
           {/* Name Input */}
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.colors.text }]}>Name</Text>
+            <Text style={[styles.label, { color: theme.colors.text }]}>
+              Name
+            </Text>
             <Controller
               control={control}
               name="name"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[
-                    styles.input, 
-                    { 
+                    styles.input,
+                    {
                       backgroundColor: theme.colors.card,
                       color: theme.colors.text,
-                      borderColor: theme.colors.border
+                      borderColor: theme.colors.border,
                     },
-                    errors.name && { borderColor: theme.colors.error, borderWidth: 2 }
+                    errors.name && {
+                      borderColor: theme.colors.error,
+                      borderWidth: 2,
+                    },
                   ]}
                   value={value}
                   onChangeText={onChange}
@@ -77,26 +91,33 @@ export default function AddDocumentModal() {
               )}
             />
             {errors.name && (
-              <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.name.message}</Text>
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                {errors.name.message}
+              </Text>
             )}
           </View>
 
           {/* Version Input */}
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.colors.text }]}>Version</Text>
+            <Text style={[styles.label, { color: theme.colors.text }]}>
+              Version
+            </Text>
             <Controller
               control={control}
               name="version"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[
-                    styles.input, 
-                    { 
+                    styles.input,
+                    {
                       backgroundColor: theme.colors.card,
                       color: theme.colors.text,
-                      borderColor: theme.colors.border
+                      borderColor: theme.colors.border,
                     },
-                    errors.version && { borderColor: theme.colors.error, borderWidth: 2 }
+                    errors.version && {
+                      borderColor: theme.colors.error,
+                      borderWidth: 2,
+                    },
                   ]}
                   value={value}
                   onChangeText={(text) => handleVersionChange(text, onChange)}
@@ -108,13 +129,17 @@ export default function AddDocumentModal() {
               )}
             />
             {errors.version && (
-              <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.version.message}</Text>
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                {errors.version.message}
+              </Text>
             )}
           </View>
 
           {/* File Upload Section */}
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.colors.text }]}>File</Text>
+            <Text style={[styles.label, { color: theme.colors.text }]}>
+              File
+            </Text>
             <TouchableOpacity
               style={[styles.fileButton, { borderColor: theme.colors.primary }]}
               onPress={handleFileSelection}
@@ -124,15 +149,28 @@ export default function AddDocumentModal() {
                 size={20}
                 color={theme.colors.primary}
               />
-              <Text style={[styles.fileButtonText, { color: theme.colors.primary }]}>Choose file</Text>
+              <Text
+                style={[styles.fileButtonText, { color: theme.colors.primary }]}
+              >
+                Choose file
+              </Text>
             </TouchableOpacity>
 
             {/* Selected Files List */}
             {selectedFiles && selectedFiles.length > 0 && (
               <View style={styles.selectedFilesContainer}>
                 {selectedFiles.map((fileName, index) => (
-                  <View key={index} style={[styles.fileItem, { backgroundColor: theme.colors.backgroundTertiary }]}>
-                    <Text style={[styles.fileName, { color: theme.colors.text }]} numberOfLines={1}>
+                  <View
+                    key={index}
+                    style={[
+                      styles.fileItem,
+                      { backgroundColor: theme.colors.backgroundTertiary },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.fileName, { color: theme.colors.text }]}
+                      numberOfLines={1}
+                    >
                       {fileName}
                     </Text>
                     <TouchableOpacity
@@ -150,7 +188,9 @@ export default function AddDocumentModal() {
               </View>
             )}
             {errors.files && (
-              <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.files.message}</Text>
+              <Text style={[styles.errorText, { color: theme.colors.error }]}>
+                {errors.files.message}
+              </Text>
             )}
           </View>
         </ScrollView>
@@ -161,9 +201,11 @@ export default function AddDocumentModal() {
             style={[
               styles.submitButton,
               { backgroundColor: theme.colors.primary },
-              (isSubmitting || !isValid) && { backgroundColor: theme.colors.primaryDisabled },
+              (isSubmitting || !isValid) && {
+                backgroundColor: theme.colors.primaryDisabled,
+              },
             ]}
-            onPress={() => handleSubmit(onSubmit)}
+            onPress={handleSubmit}
             disabled={isSubmitting || !isValid}
           >
             <Text style={styles.submitButtonText}>

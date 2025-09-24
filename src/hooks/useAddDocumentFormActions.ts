@@ -18,7 +18,7 @@ interface UseAddDocumentFormActionsReturnType {
   removeFile: (index: number) => void;
   handleVersionChange: (
     text: string,
-    onChange: (value: string) => void
+    onChange: (value: string) => void,
   ) => void;
   onSubmit: (data: CreateDocumentFormData) => Promise<void>;
   handleClose: () => void;
@@ -41,7 +41,12 @@ const applyVersionMask = (text: string): string => {
   // Only allow numbers and dots
   const numbersOnly = withoutStartingDot.replace(/[^0-9.]/g, "");
 
-  return numbersOnly;
+  // Split by dots and limit to 3 parts (major.minor.patch)
+  const parts = numbersOnly.split(".");
+  const limitedParts = parts.slice(0, 3);
+
+  // Join back with dots
+  return limitedParts.join(".");
 };
 
 export const UseAddDocumentFormActions = ({
@@ -65,7 +70,7 @@ export const UseAddDocumentFormActions = ({
 
         // Filter files that are not already selected to avoid duplicates
         const newFiles = fileNames.filter(
-          (fileName) => !currentFiles.includes(fileName)
+          (fileName) => !currentFiles.includes(fileName),
         );
 
         if (newFiles.length === 0) {
@@ -91,7 +96,7 @@ export const UseAddDocumentFormActions = ({
 
   const handleVersionChange = (
     text: string,
-    onChange: (value: string) => void
+    onChange: (value: string) => void,
   ) => {
     const maskedText = applyVersionMask(text);
     onChange(maskedText);
@@ -121,7 +126,9 @@ export const UseAddDocumentFormActions = ({
       ]);
     } catch (error) {
       console.error("Error creating document:", error);
-      Alert.alert("Error", "Could not create document");
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      Alert.alert("Error", `Could not create document: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }

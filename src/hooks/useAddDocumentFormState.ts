@@ -3,6 +3,7 @@ import {
   Control,
   FieldErrors,
   useForm,
+  UseFormHandleSubmit,
   UseFormSetValue,
 } from "react-hook-form";
 
@@ -13,7 +14,7 @@ import {
 
 interface UseAddDocumentFormStateReturnType {
   control: Control<CreateDocumentFormData>;
-  handleSubmit: (onSubmit: (data: CreateDocumentFormData) => void) => void;
+  handleSubmit: UseFormHandleSubmit<CreateDocumentFormData>;
   errors: FieldErrors<CreateDocumentFormData>;
   isValid: boolean;
   setValue: UseFormSetValue<CreateDocumentFormData>;

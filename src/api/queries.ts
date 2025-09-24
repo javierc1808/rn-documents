@@ -58,6 +58,7 @@ export const createDocument = async (
   };
 
   const url = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";
+
   const res = await fetch(url + "/documents", {
     method: "POST",
     headers: {
@@ -109,7 +110,7 @@ export const useCreateDocumentMutation = (): UseMutationResult<
       queryClient.invalidateQueries({ queryKey: ["documents"] });
     },
     onError: (error: Error) => {
-      console.log(error);
+      console.error("Error in mutation:", error);
     },
   });
 };

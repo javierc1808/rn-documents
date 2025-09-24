@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import * as DocumentPicker from "expo-document-picker";
+import { router } from "expo-router";
 import { Alert } from "react-native";
 
 import { useCreateDocumentMutation } from "@/src/api/queries";
@@ -34,7 +35,6 @@ const mockCreateDocumentMutation =
 
 describe("useAddDocument", () => {
   const mockMutateAsync = jest.fn();
-  const mockReset = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -225,14 +225,15 @@ describe("useAddDocument", () => {
 
     const { result } = renderHook(() => useAddDocument());
 
-    const formData = {
-      name: "Test Document",
-      version: "1.0.0",
-      files: ["test.pdf", "test.docx"],
-    };
+    // Set form values using setValue
+    await act(async () => {
+      result.current.setValue("name", "Test Document");
+      result.current.setValue("version", "1.0.0");
+      result.current.setValue("files", ["test.pdf", "test.docx"]);
+    });
 
     await act(async () => {
-      await result.current.onSubmit(formData);
+      result.current.handleSubmit();
     });
 
     expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -258,19 +259,20 @@ describe("useAddDocument", () => {
 
     const { result } = renderHook(() => useAddDocument());
 
-    const formData = {
-      name: "Test Document",
-      version: "1.0.0",
-      files: ["test.pdf"],
-    };
+    // Set form values using setValue
+    await act(async () => {
+      result.current.setValue("name", "Test Document");
+      result.current.setValue("version", "1.0.0");
+      result.current.setValue("files", ["test.pdf"]);
+    });
 
     await act(async () => {
-      await result.current.onSubmit(formData);
+      result.current.handleSubmit();
     });
 
     expect(Alert.alert).toHaveBeenCalledWith(
       "Error",
-      "Could not create document",
+      "Could not create document: Creation failed",
     );
   });
 
@@ -280,7 +282,6 @@ describe("useAddDocument", () => {
     result.current.handleClose();
 
     // Verify that router.back() is called (which is mocked)
-    const { router } = require("expo-router");
     expect(router.back).toHaveBeenCalled();
   });
 
@@ -290,18 +291,19 @@ describe("useAddDocument", () => {
 
     const { result } = renderHook(() => useAddDocument());
 
-    const formData = {
-      name: "Test Document",
-      version: "1.0.0",
-      files: ["test.pdf"],
-    };
+    // Set form values using setValue
+    await act(async () => {
+      result.current.setValue("name", "Test Document");
+      result.current.setValue("version", "1.0.0");
+      result.current.setValue("files", ["test.pdf"]);
+    });
 
     // Verify that initially it's not submitting
     expect(result.current.isSubmitting).toBe(false);
 
     // Start submission
     await act(async () => {
-      await result.current.onSubmit(formData);
+      result.current.handleSubmit();
     });
 
     // Verify that the mutation was called with processed data

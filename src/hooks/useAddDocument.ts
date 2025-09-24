@@ -12,14 +12,13 @@ export interface UseAddDocumentReturnType {
   control: Control<CreateDocumentFormData>;
   errors: FieldErrors<CreateDocumentFormData>;
   isValid: boolean;
-  handleSubmit: (onSubmit: (data: CreateDocumentFormData) => void) => void;
-  onSubmit: (data: CreateDocumentFormData) => void;
+  handleSubmit: () => void;
   handleClose: () => void;
   handleFileSelection: () => void;
   removeFile: (index: number) => void;
   handleVersionChange: (
     text: string,
-    onChange: (value: string) => void
+    onChange: (value: string) => void,
   ) => void;
   isSubmitting: boolean;
 }
@@ -58,8 +57,7 @@ export const useAddDocument = (): UseAddDocumentReturnType => {
     isValid,
 
     // Form actions
-    handleSubmit,
-    onSubmit,
+    handleSubmit: handleSubmit(onSubmit),
     handleClose,
     handleFileSelection,
     removeFile,
