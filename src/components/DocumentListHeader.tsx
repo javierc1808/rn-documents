@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "../hooks/useTheme";
+
+import { useTheme } from "@/src/hooks/useTheme";
+import { formatRelativeTime } from "@/src/utils/dateFormat";
 
 interface DocumentListHeaderProps {
   networkStatus: "idle" | "ok" | "error";
@@ -28,7 +30,9 @@ export const DocumentListHeader: React.FC<DocumentListHeaderProps> = ({
         <View style={styles.syncContainer}>
           <Text style={[styles.syncText, { color: theme.colors.text }]}>
             Last sync:{" "}
-            {lastSyncAt ? new Date(lastSyncAt).toLocaleTimeString() : "—"}
+            {lastSyncAt
+              ? formatRelativeTime(new Date(lastSyncAt).toISOString())
+              : "—"}
           </Text>
         </View>
       )}

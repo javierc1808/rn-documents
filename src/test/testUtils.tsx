@@ -1,3 +1,4 @@
+import { CreateDocumentDTO, Document, User } from "@/src/models/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   render,
@@ -6,7 +7,6 @@ import {
   RenderOptions,
 } from "@testing-library/react-native";
 import React from "react";
-import { CreateDocumentDTO, Document, User } from "../models/types";
 
 // Jest mock to avoid type errors
 const mockJest = {

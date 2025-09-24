@@ -1,14 +1,16 @@
+import { formatDistance, parseISO } from "date-fns";
+
 // Function to format the date
 export const formatDate = (dateString: string) => {
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
+    return date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   } catch {
     return dateString; // Return original string if there's an error
@@ -16,7 +18,7 @@ export const formatDate = (dateString: string) => {
 };
 
 // Function to show relative time (e.g., "1 day ago", "now")
-export const formatRelativeTime = (dateString: string) => {
+export const formatRelativeTimeOld = (dateString: string) => {
   try {
     const date = new Date(dateString);
     const now = new Date();
@@ -30,21 +32,34 @@ export const formatRelativeTime = (dateString: string) => {
     const diffInYears = Math.floor(diffInDays / 365);
 
     if (diffInSeconds < 60) {
-      return 'now';
+      return "now";
     } else if (diffInMinutes < 60) {
-      return diffInMinutes === 1 ? '1 minute ago' : `${diffInMinutes} minutes ago`;
+      return diffInMinutes === 1
+        ? "1 minute ago"
+        : `${diffInMinutes} minutes ago`;
     } else if (diffInHours < 24) {
-      return diffInHours === 1 ? '1 hour ago' : `${diffInHours} hours ago`;
+      return diffInHours === 1 ? "1 hour ago" : `${diffInHours} hours ago`;
     } else if (diffInDays < 7) {
-      return diffInDays === 1 ? '1 day ago' : `${diffInDays} days ago`;
+      return diffInDays === 1 ? "1 day ago" : `${diffInDays} days ago`;
     } else if (diffInWeeks < 4) {
-      return diffInWeeks === 1 ? '1 week ago' : `${diffInWeeks} weeks ago`;
+      return diffInWeeks === 1 ? "1 week ago" : `${diffInWeeks} weeks ago`;
     } else if (diffInMonths < 12) {
-      return diffInMonths === 1 ? '1 month ago' : `${diffInMonths} months ago`;
+      return diffInMonths === 1 ? "1 month ago" : `${diffInMonths} months ago`;
     } else {
-      return diffInYears === 1 ? '1 year ago' : `${diffInYears} years ago`;
+      return diffInYears === 1 ? "1 year ago" : `${diffInYears} years ago`;
     }
   } catch {
     return dateString; // Return original string if there's an error
+  }
+};
+
+export const formatRelativeTime = (dateString: string) => {
+  try {
+    const date = parseISO(dateString);
+    return formatDistance(date, new Date(), {
+      addSuffix: true,
+    });
+  } catch {
+    return dateString;
   }
 };

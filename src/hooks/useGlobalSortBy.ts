@@ -1,13 +1,17 @@
 import { useSyncExternalStore } from "react";
-import { SortByEnum } from "../models/enums";
-import { createStore } from "../utils/store";
+
+import { SortByEnum } from "@/src/models/enums";
+import { createStore } from "@/src/utils/store";
 
 const globalSortBy = createStore<SortByEnum>(SortByEnum.RECENT);
 const globalIsAnimating = createStore<boolean>(false);
 
 export const useGlobalSortBy = () => {
   const sortBy = useSyncExternalStore(globalSortBy.subscribe, globalSortBy.get);
-  const isAnimating = useSyncExternalStore(globalIsAnimating.subscribe, globalIsAnimating.get);
+  const isAnimating = useSyncExternalStore(
+    globalIsAnimating.subscribe,
+    globalIsAnimating.get,
+  );
 
   const handlePress = () => {
     let newElement: SortByEnum;
