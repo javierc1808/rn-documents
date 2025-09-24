@@ -18,6 +18,7 @@ import { useTheme } from "@/src/hooks/useTheme";
 
 export default function AddDocumentModal() {
   const theme = useTheme();
+
   const {
     control,
     errors,
@@ -162,7 +163,7 @@ export default function AddDocumentModal() {
               { backgroundColor: theme.colors.primary },
               (isSubmitting || !isValid) && { backgroundColor: theme.colors.primaryDisabled },
             ]}
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => handleSubmit(onSubmit)}
             disabled={isSubmitting || !isValid}
           >
             <Text style={styles.submitButtonText}>
