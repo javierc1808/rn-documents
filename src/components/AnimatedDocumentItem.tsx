@@ -1,11 +1,24 @@
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { Animated, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import {
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import React, { useCallback, useMemo } from "react";
+import {
+  Animated,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 
 import { useAnimatedDocumentItem } from "@/src/hooks/useAnimatedDocumentItem";
 import { useTheme } from "@/src/hooks/useTheme";
 import { Document } from "@/src/models/types";
 import { formatRelativeTime } from "@/src/utils/dateFormat";
+import { sharedText } from "../utils/shared";
 
 interface AnimatedDocumentItemProps {
   data: Document;
@@ -16,13 +29,13 @@ interface AnimatedDocumentItemProps {
   isInitialLoad?: boolean;
 }
 
-export default function AnimatedDocumentItem({ 
-  data, 
-  style, 
-  index, 
+export default function AnimatedDocumentItem({
+  data,
+  style,
+  index,
   isAnimating,
   onAnimationComplete,
-  isInitialLoad = false
+  isInitialLoad = false,
 }: AnimatedDocumentItemProps) {
   const theme = useTheme();
   const { animatedStyle, isGridMode } = useAnimatedDocumentItem({
@@ -32,28 +45,86 @@ export default function AnimatedDocumentItem({
     isInitialLoad,
   });
 
-  const formatRelativeTimeMemo = useMemo(() => formatRelativeTime(data.createdAt), [data]);
+  const formatRelativeTimeMemo = useMemo(
+    () => formatRelativeTime(data.createdAt),
+    [data]
+  );
+
+  const sharedTextMemo = useCallback(
+    () =>
+      sharedText(
+        data.title,
+        `Document: ${data.title} - Contributors: ${data.contributors.map((contributor) => contributor.name).join(", ")} - Version: ${data.version}`
+      ),
+    [data]
+  );
 
   if (isGridMode) {
     return (
-      <Animated.View style={[styles.cardContainer, { backgroundColor: theme.colors.card }, style, animatedStyle]}>
+      <Animated.View
+        style={[
+          styles.cardContainer,
+          { backgroundColor: theme.colors.card },
+          style,
+          animatedStyle,
+        ]}
+      >
         <View style={styles.gridTitleContainer}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{data.title}</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              gap: 10,
+            }}
+          >
+            <Text style={[styles.title, { flex: 1, color: theme.colors.text }]}>
+              {data.title}
+            </Text>
+            <TouchableOpacity onPress={sharedTextMemo}>
+              <Ionicons
+                name="share-outline"
+                size={24}
+                color={theme.colors.icon}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={styles.sizeBox} />
-          <Text style={[styles.version, { color: theme.colors.textSecondary }]}>Version {data.version}</Text>
+          <Text style={[styles.version, { color: theme.colors.textSecondary }]}>
+            Version {data.version}
+          </Text>
         </View>
         <View style={styles.gridDateContainer}>
-          <Text style={[styles.dateText, { color: theme.colors.textTertiary }]}>{formatRelativeTimeMemo}</Text>
+          <Text style={[styles.dateText, { color: theme.colors.textTertiary }]}>
+            {formatRelativeTimeMemo}
+          </Text>
         </View>
       </Animated.View>
     );
   }
 
   return (
-    <Animated.View style={[styles.cardContainer, { backgroundColor: theme.colors.card }, style, animatedStyle]}>
+    <Animated.View
+      style={[
+        styles.cardContainer,
+        { backgroundColor: theme.colors.card },
+        style,
+        animatedStyle,
+      ]}
+    >
       <View style={styles.titleContainer}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{data.title}</Text>
-        <Text style={[styles.version, { color: theme.colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">Version {data.version}</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>
+          {data.title}
+        </Text>
+        <Text
+          style={[styles.version, { color: theme.colors.textSecondary }]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          Version {data.version}
+        </Text>
+        <TouchableOpacity onPress={sharedTextMemo} style={styles.alignEnd}>
+          <Ionicons name="share-outline" size={24} color={theme.colors.icon} />
+        </TouchableOpacity>
       </View>
       <View style={styles.rowContainer}>
         <View style={styles.descriptionContainer}>
@@ -64,14 +135,17 @@ export default function AnimatedDocumentItem({
               color={theme.colors.icon}
             />
             <View style={styles.sizeBox} />
-            <Text style={[styles.descriptionTitle, { color: theme.colors.text }]}>Contributors</Text>
+            <Text
+              style={[styles.descriptionTitle, { color: theme.colors.text }]}
+            >
+              Contributors
+            </Text>
           </View>
           {data.contributors.map((contributor, index) => (
-            <View
-              key={`${contributor.id}-${index}`}
-              style={styles.separator}
-            >
-              <Text style={[styles.title2, { color: theme.colors.textSecondary }]}>
+            <View key={`${contributor.id}-${index}`} style={styles.separator}>
+              <Text
+                style={[styles.title2, { color: theme.colors.textSecondary }]}
+              >
                 {contributor.name}
               </Text>
             </View>
@@ -81,17 +155,27 @@ export default function AnimatedDocumentItem({
           <View style={styles.descriptionTitleContainer}>
             <FontAwesome5 name="link" size={16} color={theme.colors.icon} />
             <View style={styles.sizeBox} />
-            <Text style={[styles.descriptionTitle, { color: theme.colors.text }]}>Attachments</Text>
+            <Text
+              style={[styles.descriptionTitle, { color: theme.colors.text }]}
+            >
+              Attachments
+            </Text>
           </View>
           {data.attachments.map((attachment, index) => (
             <View key={`${attachment}-${index}`} style={styles.separator}>
-              <Text style={[styles.title2, { color: theme.colors.textSecondary }]}>{attachment}</Text>
+              <Text
+                style={[styles.title2, { color: theme.colors.textSecondary }]}
+              >
+                {attachment}
+              </Text>
             </View>
           ))}
         </View>
       </View>
       <View style={styles.dateContainer}>
-        <Text style={[styles.dateText, { color: theme.colors.textTertiary }]}>{formatRelativeTime(data.createdAt)}</Text>
+        <Text style={[styles.dateText, { color: theme.colors.textTertiary }]}>
+          {formatRelativeTime(data.createdAt)}
+        </Text>
       </View>
     </Animated.View>
   );
@@ -158,5 +242,9 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 12,
     fontWeight: "500",
+  },
+  alignEnd: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
 });
