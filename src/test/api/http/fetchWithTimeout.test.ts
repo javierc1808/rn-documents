@@ -1,4 +1,4 @@
-import { fetchWithTimeout } from "../../api/fetchWithTimeout";
+import { fetchWithTimeout } from "@/src/api/http/fetchWithTimeout";
 
 // Mock global fetch
 global.fetch = jest.fn();
@@ -8,7 +8,7 @@ describe("fetchWithTimeout", () => {
     jest.clearAllMocks();
   });
 
-  it("should hacer una petición exitosa y retornar la respuesta", async () => {
+  it("should make a successful request and return the response", async () => {
     const mockResponse = {
       ok: true,
       json: jest.fn().mockResolvedValue({ data: "test" }),
@@ -23,7 +23,7 @@ describe("fetchWithTimeout", () => {
     expect(result).toBe(mockResponse);
   });
 
-  it("should usar el timeout por defecto de 8000ms", async () => {
+  it("should use the default timeout of 8000ms", async () => {
     const mockResponse = {
       ok: true,
       json: jest.fn().mockResolvedValue({ data: "test" }),
@@ -37,7 +37,7 @@ describe("fetchWithTimeout", () => {
     });
   });
 
-  it("should usar el timeout personalizado cuando se proporciona", async () => {
+  it("should use custom timeout when provided", async () => {
     const mockResponse = {
       ok: true,
       json: jest.fn().mockResolvedValue({ data: "test" }),
@@ -51,7 +51,7 @@ describe("fetchWithTimeout", () => {
     });
   });
 
-  it("should pasar las opciones adicionales a fetch", async () => {
+  it("should pass additional options to fetch", async () => {
     const mockResponse = {
       ok: true,
       json: jest.fn().mockResolvedValue({ data: "test" }),
@@ -74,7 +74,7 @@ describe("fetchWithTimeout", () => {
     });
   });
 
-  it("should abortar la petición cuando se alcanza el timeout", async () => {
+  it("should abort the request when the timeout is reached", async () => {
     const mockAbortController = {
       abort: jest.fn(),
       signal: {} as AbortSignal,
@@ -103,7 +103,7 @@ describe("fetchWithTimeout", () => {
     global.AbortController = originalAbortController;
   });
 
-  it("should limpiar el timeout cuando la petición se completa exitosamente", async () => {
+  it("should clear the timeout when the request completes successfully", async () => {
     const mockResponse = {
       ok: true,
       json: jest.fn().mockResolvedValue({ data: "test" }),
@@ -118,7 +118,7 @@ describe("fetchWithTimeout", () => {
     clearTimeoutSpy.mockRestore();
   });
 
-  it("should limpiar el timeout cuando la petición falla", async () => {
+  it("should clear the timeout when the request fails", async () => {
     const mockError = new Error("Network error");
     (global.fetch as jest.Mock).mockRejectedValue(mockError);
 
@@ -132,7 +132,7 @@ describe("fetchWithTimeout", () => {
     clearTimeoutSpy.mockRestore();
   });
 
-  it("should manejar errors de red correctamente", async () => {
+  it("should handle network errors correctly", async () => {
     const networkError = new Error("Network error");
     (global.fetch as jest.Mock).mockRejectedValue(networkError);
 
