@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Animated } from "react-native";
+import { Animated, StyleProp, ViewStyle } from "react-native";
 
 import { ListByEnum } from "@/src/models/enums";
 import { useListByStore } from "@/src/stores/useListByStore";
@@ -71,7 +71,7 @@ export const useAnimatedDocumentItem = ({
     }
   }, [isAnimating, index, fadeAnim, scaleAnim, onAnimationComplete, isInitialLoad, activeElement]);
 
-  const animatedStyle = {
+  const animatedStyle: StyleProp<ViewStyle> = {
     opacity: fadeAnim,
     transform: [{ scale: scaleAnim }],
   };
