@@ -79,6 +79,7 @@ export const createTestQueryClient = () =>
       queries: {
         retry: false,
         staleTime: 0, // Data is always considered stale
+        gcTime: 0,
       },
       mutations: {
         retry: false,

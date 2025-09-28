@@ -101,6 +101,7 @@ jest.mock("expo-notifications", () => ({
       queries: {
         retry: false, // Disable retries for faster tests
         staleTime: 0, // Data is always considered stale
+        gcTime: 0
       },
       mutations: {
         retry: false,
