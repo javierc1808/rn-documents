@@ -1,20 +1,22 @@
 import { QueryClient } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react-native";
 
-import {
-  useCreateDocumentMutation,
-  useGetDocumentsQuery,
-} from "@/src/api/queries";
-import { useCreateDocument, useDocuments } from "@/src/hooks/useDocuments";
+import { useCreateDocumentMutation } from "@/src/api/queries/useCreateDocumentMutation";
+import { useGetDocumentsQuery } from "@/src/api/queries/useGetDocumentsQuery";
+import { getOptimisticData, useCreateDocument } from "@/src/hooks/useCreateDocument";
+import { useDocuments } from "@/src/hooks/useDocuments";
 import { SortByEnum } from "@/src/models/enums";
 import { CreateDocumentDTO, Document } from "@/src/models/types";
 import { useSortByStore } from "@/src/stores/useSortByStore";
-import { createWrapper } from "../testUtils";
+import { createTestQueryClient, createWrapper } from "../testUtils";
 
 // Mock dependencies
-jest.mock("@/src/api/queries", () => ({
-  useGetDocumentsQuery: jest.fn(),
+jest.mock("@/src/api/queries/useCreateDocumentMutation", () => ({
   useCreateDocumentMutation: jest.fn(),
+}));
+
+jest.mock("@/src/api/queries/useGetDocumentsQuery", () => ({
+  useGetDocumentsQuery: jest.fn(),
 }));
 
 jest.mock("@/src/stores/useSortByStore", () => ({
@@ -36,7 +38,7 @@ const mockUseSortByStore = useSortByStore as jest.MockedFunction<
 const createMockDocument = (
   id: string,
   title: string,
-  createdAt: string,
+  createdAt: string
 ): Document => ({
   id,
   title,
@@ -484,16 +486,21 @@ describe("useCreateDocument", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: { retry: false },
-        mutations: { retry: false },
-      },
-    });
+    queryClient = createTestQueryClient();
   });
 
-  it.skip("should create document with optimistic update", () => {
-    const mockMutate = jest.fn();
+  it("should create document with optimistic update", () => {
+    const mockMutate = jest.fn((vars: CreateDocumentDTO) => {
+      queryClient.setQueryData(
+        ["documents", SortByEnum.RECENT],
+        (old?: Document[]) => {
+          const base = old ?? [];
+          const optimistic = getOptimisticData(vars);
+          return [optimistic, ...base];
+        }
+      );
+    });
+
     const mockDocuments = [
       createMockDocument("1", "Existing Document", "2023-01-01T00:00:00Z"),
     ];
@@ -538,6 +545,63 @@ describe("useCreateDocument", () => {
     });
   });
 
+  it("should use correct query key based on sortBy", () => {
+    const mockMutate = jest.fn((vars: CreateDocumentDTO) => {
+      queryClient.setQueryData(
+        ["documents", SortByEnum.AZ],
+        (old?: Document[]) => {
+          const base = old ?? [];
+          const optimistic = getOptimisticData(vars);
+          return [optimistic, ...base];
+        }
+      );
+    });
+
+    mockUseCreateDocumentMutation.mockReturnValue({
+      mutate: mockMutate,
+    } as any);
+
+    mockUseSortByStore.mockReturnValue({
+      activeElement: SortByEnum.AZ,
+    } as any);
+
+    const { result } = renderHook(() => useCreateDocument(), {
+      wrapper: createWrapper(),
+    });
+
+    const newDocument: CreateDocumentDTO = {
+      name: "New Document",
+      version: "1.0.0",
+      files: ["file1.pdf"],
+    };
+
+    result.current.onSubmit(newDocument);
+
+    // Verify that the correct key was used
+    const updatedData = queryClient.getQueryData(["documents", SortByEnum.AZ]);
+    expect(updatedData).toHaveLength(1);
+  });
+
+  it("should propagate mutation properties", () => {
+    const mockMutationResult = {
+      mutate: jest.fn(),
+      isPending: true,
+      error: new Error("Mutation error"),
+    };
+
+    mockUseCreateDocumentMutation.mockReturnValue(mockMutationResult as any);
+    mockUseSortByStore.mockReturnValue({
+      activeElement: SortByEnum.RECENT,
+    } as any);
+
+    const { result } = renderHook(() => useCreateDocument(), {
+      wrapper: createWrapper(),
+    });
+
+    expect(result.current.isPending).toBe(true);
+    expect(result.current.error).toBe(mockMutationResult.error);
+  });
+
   it("should revert optimistic update on error", () => {
     const mockMutate = jest.fn();
     const mockDocuments = [
@@ -579,54 +643,6 @@ describe("useCreateDocument", () => {
     expect(revertedData).toEqual(mockDocuments);
   });
 
-  it.skip("should use correct query key based on sortBy", () => {
-    const mockMutate = jest.fn();
-
-    mockUseCreateDocumentMutation.mockReturnValue({
-      mutate: mockMutate,
-    } as any);
-
-    mockUseSortByStore.mockReturnValue({
-      activeElement: SortByEnum.AZ,
-    } as any);
-
-    const { result } = renderHook(() => useCreateDocument(), {
-      wrapper: createWrapper(),
-    });
-
-    const newDocument: CreateDocumentDTO = {
-      name: "New Document",
-      version: "1.0.0",
-      files: ["file1.pdf"],
-    };
-
-    result.current.onSubmit(newDocument);
-
-    // Verify that the correct key was used
-    const updatedData = queryClient.getQueryData(["documents", SortByEnum.AZ]);
-    expect(updatedData).toHaveLength(1);
-  });
-
-  it.skip("should propagate mutation properties", () => {
-    const mockMutationResult = {
-      mutate: jest.fn(),
-      isLoading: true,
-      error: new Error("Mutation error"),
-    };
-
-    mockUseCreateDocumentMutation.mockReturnValue(mockMutationResult as any);
-    mockUseSortByStore.mockReturnValue({
-      activeElement: SortByEnum.RECENT,
-    } as any);
-
-    const { result } = renderHook(() => useCreateDocument(), {
-      wrapper: createWrapper(),
-    });
-
-    expect(result.current.isPending).toBe(true);
-    expect(result.current.error).toBe(mockMutationResult.error);
-  });
-
   it("should validate optimistic update flow with spies", () => {
     const mockMutate = jest.fn();
     const mockDocuments = [
@@ -636,7 +652,7 @@ describe("useCreateDocument", () => {
     // Create spies for mutation and store
     const mutationSpy = jest.spyOn(
       mockUseCreateDocumentMutation,
-      "mockReturnValue",
+      "mockReturnValue"
     );
     const sortStoreSpy = jest.spyOn(mockUseSortByStore, "mockReturnValue");
 
@@ -693,7 +709,7 @@ describe("useCreateDocument", () => {
     // Create spies for error scenario
     const mutationSpy = jest.spyOn(
       mockUseCreateDocumentMutation,
-      "mockReturnValue",
+      "mockReturnValue"
     );
     const sortStoreSpy = jest.spyOn(mockUseSortByStore, "mockReturnValue");
 
@@ -751,7 +767,7 @@ describe("useCreateDocument", () => {
     // Create spies for different sort types
     const mutationSpy = jest.spyOn(
       mockUseCreateDocumentMutation,
-      "mockReturnValue",
+      "mockReturnValue"
     );
     const sortStoreSpy = jest.spyOn(mockUseSortByStore, "mockReturnValue");
 
@@ -810,7 +826,7 @@ describe("useCreateDocument", () => {
     // Create spies for mutation properties
     const mutationSpy = jest.spyOn(
       mockUseCreateDocumentMutation,
-      "mockReturnValue",
+      "mockReturnValue"
     );
     const sortStoreSpy = jest.spyOn(mockUseSortByStore, "mockReturnValue");
 
