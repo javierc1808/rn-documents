@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { UseFormSetValue } from "react-hook-form";
 import { Alert } from "react-native";
 
-import { useCreateDocumentMutation } from "@/src/api/queries";
+import { useCreateDocumentMutation } from "@/src/api/queries/useCreateDocumentMutation";
 import { CreateDocumentFormData } from "@/src/schemas/documentSchema";
 
 interface UseAddDocumentFormActionsParams {
@@ -25,7 +25,7 @@ interface UseAddDocumentFormActionsReturnType {
 }
 
 // Function to apply version mask with auto-completion of dots
-const applyVersionMask = (text: string): string => {
+const _applyVersionMask = (text: string): string => {
   // Remove all characters that are not numbers, dots or commas
   const cleanText = text.replace(/[^0-9.,]/g, "");
 
@@ -98,7 +98,7 @@ export const UseAddDocumentFormActions = ({
     text: string,
     onChange: (value: string) => void,
   ) => {
-    const maskedText = applyVersionMask(text);
+    const maskedText = _applyVersionMask(text);
     onChange(maskedText);
   };
 

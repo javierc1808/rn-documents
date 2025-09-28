@@ -3,7 +3,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 
-import { useCreateDocumentMutation } from "@/src/api/queries";
+import { useCreateDocumentMutation } from "@/src/api/queries/useCreateDocumentMutation";
 import { useAddDocument } from "@/src/hooks/useAddDocument";
 
 // Mock dependencies
@@ -11,7 +11,7 @@ jest.mock("expo-document-picker", () => ({
   getDocumentAsync: jest.fn(),
 }));
 
-jest.mock("@/src/api/queries", () => ({
+jest.mock("@/src/api/queries/useCreateDocumentMutation", () => ({
   useCreateDocumentMutation: jest.fn(),
 }));
 
